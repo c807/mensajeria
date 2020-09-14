@@ -1,0 +1,67 @@
+
+
+.btn-crud {
+	
+	background-color: white;
+		border-style:  none;
+		border-color: #3D6654;
+	
+		
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		-webkit-transition-duration: 0.4s;
+		transition-duration: 0.4s;
+		cursor: pointer;
+	
+		position: relative;
+		
+		clear: left;
+		font-size: 12px;
+		padding:1px;
+		border-radius: 5px;
+		padding: 3px;
+		
+	
+}
+
+.btn-crud:hover {
+	background: #3D6654;
+	color: white;
+	
+}
+
+.btndefault {
+	
+		background-color: white;
+		border-style: solid;
+		border-color: #3D6654;
+	
+		
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		-webkit-transition-duration: 0.4s;
+		transition-duration: 0.4s;
+		cursor: pointer;
+	
+		position: relative;
+		
+		clear: left;
+		font-size: 12px;
+		
+		border-radius: 8px;
+		padding: 8px;
+		margin-top:5px;
+		
+}
+
+.bg-hd {
+	background: #3D6654;
+	color: white;
+}
+
