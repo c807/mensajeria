@@ -73,7 +73,7 @@ if (isset($datos_solicitud)) {
 
 <div class="container-fluid well well-sm">
     <form enctype="multipart/form-data" class="formsolicitud form-horizontal" id="formsolicitud"
-        action="javascript:mensajero_guardar()">
+        action="javascript:mensajero_guardar()" id="form_datos">
 
         <input type="hidden" id="idsolicitud" name="idsolicitud" class="form-control"
             value="<?php echo $idsolicitud; ?>">
@@ -325,12 +325,12 @@ if (isset($datos_solicitud)) {
                     <div class="col-sm-8">
 
                         <label class="radio-inline">
-                            <input type="radio" name="aceptar" value="1"
+                            <input type="radio" name="aceptar" id="aceptar" value="1"
                                 <?php echo($aceptada == 1 ? "checked" : "");?> />
                             Aceptada</label>
 
                         <label class="radio-inline">
-                            <input type="radio" name="aceptar" value="0"
+                            <input type="radio" name="aceptar" id="aceptar" value="0"
                                 <?php echo($aceptada == 0 ? "checked" : "");?> />
                             Rechazada</label>
 

@@ -133,3 +133,31 @@ if ( ! function_exists('correo'))
 }
 
 
+
+if (!function_exists('enviarCorreo')) {
+	function enviarCorreo($datos = array()){
+		$url = "http://intranet.c807.com/grupo_c807/mtm/contactos/index.php/envio/general";
+
+		if (empty($datos['de'])) { $datos['de'] = array('noreply@c807.com', 'C807'); }
+
+		$postdata = http_build_query(array('datos' => $datos), '', '&');
+
+		$opts = array('http' =>
+		    array(
+		        'method'  => 'POST',
+		        'header'  => 'Content-type: application/x-www-form-urlencoded',
+		        'content' => $postdata
+		    )
+		);
+
+		$context = stream_context_create($opts);
+		$resultado = file_get_contents($url, false, $context);
+
+		$obj = json_decode($resultado);
+
+		return isset($obj->exito) ? $obj->exito : $resultado;
+	}
+}
+
+
+

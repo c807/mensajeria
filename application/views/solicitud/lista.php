@@ -8,6 +8,7 @@
 
 <body>
 
+<input type="hidden" value="<?php echo $opc['opcion']; ?>" id="opcion" name="opcion">
 
     <div class="panel panel-default" id="form_solicitud">
         <div class="panel-heading" id="titulo">
