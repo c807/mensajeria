@@ -12,19 +12,26 @@ class Solicitud extends CI_Controller
         $this->load->model('solicitud/Solicitud_model');
         $this->load->model('Conf_model');
         $this->load->helper('c807');
+        
     }
 
 
     public function index()
     {
-        $array = array(
-            'opcion'        => $_GET['op'],
+        $op = "";
+        $id = "";
+        if (isset($_GET['op'])) {
+            $op = $_GET['op'];
+            $id = $_GET['id'];
+        }
 
+        $array = array(
+            'opcion'        => $op,
+            'id'        => $id,
         );
 
         $dato['estatus'] = $this->Conf_model->estatus();
         $dato['mensajero'] = $this->Conf_model->mensajero();
-        //  $this->load->view("solicitud/cuerpo", $dato);
         $this->datos['navtext']   = "Gestión de Mensajería";
         $this->datos['form']     = "solicitud/contenido";
         $this->datos['opc'] = $array;
@@ -34,6 +41,7 @@ class Solicitud extends CI_Controller
     }
 
     public function lista_solicitud()
+
     {
         $datos['mensajero'] = $this->Conf_model->mensajero();
         $datos['estatus'] = $this->Conf_model->estatus();
@@ -56,7 +64,7 @@ class Solicitud extends CI_Controller
 
         //si $op es igual a cero(0), es porque es invocado desde ERP
 
-        if ($op == 0) {
+        if ($op == 1) {
             $datos['file'] = $this->Solicitud_model->get_file($id);
             $_SESSION['usuario'] = $datos['file']->usuario_id;
         }
@@ -70,8 +78,7 @@ class Solicitud extends CI_Controller
 
     public function crear_solicitud()
     {
-
-        if ($_SESSION['usuario'] == 0) {
+               if ($_SESSION['usuario'] == 0) {
             $id_usuario = $_POST['colaborador'];
         } else {
             $id_usuario = $_SESSION['usuario'];
@@ -79,38 +86,54 @@ class Solicitud extends CI_Controller
 
         $actividad = $_POST["actividad"];
         $cobrada = 0;
-
-        if ($_POST['cobrada'] == 'on') {
-            $cobrada = 1;
-        } else {
-            $cobrada = 0;
+        if (isset($_POST['cobrada'])) {
+            if ($_POST['cobrada'] == 'on') {
+                $cobrada = 1;
+            } else {
+                $cobrada = 0;
+            }
         }
-        // 'usuario'          =>  $id_usuario, //$_POST['colaborador'],
+        $justificacion = "";
+        if (isset($_POST['justificacion'])) {
+            $justificacion = $_POST['justificacion'];
+        }
+        $valor = 0;
+        if (isset($_POST['valor'])) {
+            $valor = $_POST['valor'];
+        }
+
+        $documento = "";
+        if (isset($_POST['documento'])) {
+            $documento = $_POST['documento'];
+        }
         $id = $_POST['idsolicitud'];
+
         $data = array(
             'file'             => $_POST['file'],
             'usuario'          => $id_usuario,
             'idproceso'        => $_POST['proceso'],
             'cobrada'          => $cobrada,
-            'justificacion'    => $_POST['justificacion'],
-            'costo'            => $_POST['valor'],
+            'justificacion'    => $justificacion,
+            'costo'            => $valor,
             'fecha_sugerida'   => $_POST['fecha_sugerida'],
             'hora_sugerida'    => $_POST['hora_sugerida'],
             'prioridad'        => $_POST['prioridad'],
             'actividad'        => $_POST['actividad'],
-            'documento'        => $_POST['documento'],
+            'documento'        => $documento,
             'consignado_a'     => $_POST['consignado_a'],
             'lugar'            => $_POST['lugar'],
             'contacto'         => $_POST['contacto'],
             'direccion'        => $_POST['direccion'],
             'idturno'          => $_POST['turno'],
-            'idzona'           => $_POST['zona'],
             'observaciones'    => $_POST['observaciones'],
             'estatus'          => 1
         );
 
         $solicitud =  $this->Solicitud_model->crear_solicitud($id, $data);
-        $this->bitacora($solicitud, 1);
+        if ($id) {
+        } else {
+            $this->bitacora($solicitud, 1);
+        }
     }
 
     public function bitacora($id, $estatus)

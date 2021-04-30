@@ -3,6 +3,7 @@ function base_url(url) {
 }
 
 function solicitud_lista() {
+
     $("#contenidoLista_comision").hide();
     $("#lst_comision").hide();
     var url = base_url("index.php/solicitud/Solicitud/lista_solicitud");
@@ -10,13 +11,10 @@ function solicitud_lista() {
         document.getElementById("contenidoLista").innerHTML = data;
         if ($('#opcion').val() == 1) {
             op = $('#opcion').val();
-            op = 0;
-            id = 10;
+            id = $('#id').val()
+
             $("#form_solicitud").show("blind");
             var url = base_url("index.php/solicitud/Solicitud/ver/" + op + "/" + id);
-
-
-
             $.get(url, function(data) {
                 $("#contenidoeditar").html(data);
                 $("#motivo_rechazo").prop("disabled", true);
@@ -28,7 +26,6 @@ function solicitud_lista() {
                 botones_off();
                 $("#btn1").show();
             });
-
 
         } else {
             //$("#form_solicitud").hide();
@@ -42,12 +39,14 @@ function solicitud_lista() {
 }
 
 function openform_solicitud(op, id) {
-    // op = 0; /* cuand op=0 indica que tiene un file asignado */
+    // op = 1; /* cuand op=0 indica que tiene un file asignado */
     // id = 10;
+    if (id == 1) {
+        op = 0;
+    }
+
     $("#form_solicitud").show("blind");
     var url = base_url("index.php/solicitud/Solicitud/ver/" + op + "/" + id);
-
-
     if (op == 0) {
         $.get(url, function(data) {
             $("#contenidoeditar").html(data);
@@ -76,7 +75,6 @@ function openform_solicitud(op, id) {
         });
     }
 
-    //var url = base_url("index.php/solicitud/Solicitud/ver/" + op + "/" + id);
     if (op == 2) {
         //solicitud rechazada       
         $.get(url, function(data) {
@@ -138,7 +136,7 @@ function openform_solicitud(op, id) {
             catalogo_on();
             off_entregado();
             botones_off();
-            $("#btn5").show();
+            $("#btn1").show();
         });
     }
 }
@@ -230,10 +228,13 @@ function crear_solicitud(id) {
             $.notify("Los cambios han sido guardados", "success");
             solicitud_lista();
             cerrar_formulario();
+
         },
         error: function(error) {},
     });
+
 }
+
 
 function aceptar_rechazar() {
     var url = base_url("index.php/solicitud/Solicitud/aceptar_rechazar/");
@@ -247,10 +248,8 @@ function aceptar_rechazar() {
                 solicitud_lista();
                 cerrar_formulario();
                 //----------------------------------------
-
-                // if ($("#aceptar").val() == "1") {
                 if ($('input:radio[name=aceptar]:checked').val() == 1) {
-                    alert('aceptada');
+
                 } else {
                     var url = base_url("index.php/welcome/enviar_correo_rechazo/" + $('#idsolicitud').val() + "/" + $('#motivo_rechazo').val());
 
@@ -505,13 +504,13 @@ function validar() {
 
     $(document).ready(function() {
         $("#actividad").change(function() {
-            //alert($('#actividad').val());
+
             if ($("#actividad").val() == 2 || $("#actividad").val() == 4 || $("#actividad").val() == 7) {
                 $("#documento").prop("disabled", false);
-                //$("#consignado_a").prop("disabled", false);
+
             } else {
                 $("#documento").prop("disabled", true);
-                //$("#consignado_a").prop("disabled", true);
+
             }
         });
     });

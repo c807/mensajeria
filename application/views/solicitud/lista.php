@@ -9,6 +9,7 @@
 <body>
 
 <input type="hidden" value="<?php echo $opc['opcion']; ?>" id="opcion" name="opcion">
+<input type="hidden" value="<?php echo $opc['id']; ?>" id="id" name="id">
 
     <div class="panel panel-default" id="form_solicitud">
         <div class="panel-heading" id="titulo">
