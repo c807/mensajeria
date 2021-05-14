@@ -7,7 +7,7 @@
         public function __construct()
         {
             parent :: __construct();
-            $_SESSION['pais_id']=2;
+          //  $_SESSION['pais_id']=2;
             if (isset($_SESSION['pais_id'])) {
                 $this->pais = $_SESSION['pais_id'];
             } else {
@@ -31,9 +31,9 @@
         
         public function colaborador()
         {
-           
             $query = $this->db->select('usuario,nombre')
            ->where('pais_empresa_id', $this->pais)
+           ->where('inactivo', 0)
            ->get('csd.usuario')
            ->result();
             return $query;

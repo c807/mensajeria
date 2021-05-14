@@ -10,7 +10,7 @@ if ( ! function_exists('login_url'))
 
 if ( ! function_exists('login'))
 {
-	$_SESSION['UserID']=1211;
+	
 	function login()
 	{
 	

@@ -228,13 +228,13 @@
 
         }
         public function get_file($id){
-
+         
             $query = $this->db
             ->select('a.usuario_id, a.proceso_id, b.c807_file,c.nombre, d.nombre as proceso')
             ->join('gacela.file b', 'b.id = a.file_id', 'inner')
             ->join('csd.usuario c', 'c.usuario=a.usuario_id', 'inner')
             ->join('gacela.proceso d', 'd.id=a.proceso_id', 'inner')
-            ->where('a.id', 10)
+            ->where('a.id', $id)
             ->get('gacela.file_proceso a')
             ->row();
             return $query;
