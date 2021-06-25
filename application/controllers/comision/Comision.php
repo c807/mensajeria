@@ -24,13 +24,14 @@
         
         public function comision_lista()
         {
-            $datos['mensajero']= $this->Conf_model->mensajero();
+            $datos['mensajero']= $this->Conf_model->mensajero_all();
             $this->load->view('comision/cuerpo', $datos);
         }
 
         public function listado_comisiones($desde, $hasta, $mensajero)
         {
-            $datos['mensajero']= $this->Conf_model->mensajero();
+            $hasta= date("Y-m-d",strtotime($hasta."+ 1 days")); 
+            $datos['mensajero']= $this->Conf_model->mensajero_all();
             $datos['lista_comision']    = $this->Comision_model->listado_comisiones($desde, $hasta, $mensajero);
             $this->load->view('comision/cuerpo', $datos);
         }
@@ -77,7 +78,7 @@
         public function imprimir_comision($desde, $hasta, $mensajero)
         {
                    
-                $dato['listamensajero']    = $this->Comision_model->listadomensajero($desde, $hasta, $mensajero);
+            $dato['listamensajero']    = $this->Comision_model->listadomensajero($desde, $hasta, $mensajero);
            
             include getcwd() . "/application/libraries/fpdf/fpdf.php";
             $logo=include getcwd() . "/public/img/grupocons.png";

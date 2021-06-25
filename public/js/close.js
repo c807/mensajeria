@@ -3,6 +3,5 @@ function base_url(url) {
 }
 
 function cerrarform(id) {
-
     $("#" + id).hide('blind');
 }

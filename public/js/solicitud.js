@@ -2,6 +2,20 @@ function base_url(url) {
     return window.location.origin + "/grupo_c807/mensajeria/" + url;
 }
 
+function opc_botones() {
+    var url = base_url("index.php/solicitud/Solicitud/permitir/");
+    $.get(url, function(data) {
+        if (data == 1) {
+            $("#print_manifiesto").show();
+            $("#crear_manifiesto").show();
+        } else {
+            $("#print_manifiesto").hide();
+            $("#crear_manifiesto").hide();
+        }
+
+    });
+}
+
 function solicitud_lista() {
 
     $("#contenidoLista_comision").hide();
@@ -12,7 +26,6 @@ function solicitud_lista() {
         if ($('#opcion').val() == 1) {
             op = $('#opcion').val();
             id = $('#id').val()
-
             $("#form_solicitud").show("blind");
             var url = base_url("index.php/solicitud/Solicitud/ver/" + op + "/" + id);
             $.get(url, function(data) {
@@ -22,15 +35,17 @@ function solicitud_lista() {
                 off_entregado();
                 off_liquidado();
                 off_asignar_mensajero();
-                off_recibir;
+                off_recibir();
                 botones_off();
                 $("#btn1").show();
+
             });
 
         } else {
-            //$("#form_solicitud").hide();
+
         }
         opc_impresion();
+        opc_botones();
 
         $(".chosen").chosen({
             width: "100%",
@@ -41,6 +56,7 @@ function solicitud_lista() {
 function openform_solicitud(op, id) {
     // op = 1; /* cuand op=0 indica que tiene un file asignado */
     // id = 10;
+
     if (id == 1) {
         op = 0;
     }
@@ -55,9 +71,10 @@ function openform_solicitud(op, id) {
             off_entregado();
             off_liquidado();
             off_asignar_mensajero();
-            off_recibir;
+            off_recibir();
             botones_off();
             $("#btn1").show();
+            $("#file").prop("disabled", true);
         });
     }
 
@@ -69,7 +86,7 @@ function openform_solicitud(op, id) {
             off_entregado();
             off_liquidado();
             off_asignar_mensajero();
-            off_recibir;
+            off_recibir();
             botones_off();
             $("#btn1").show();
         });
@@ -124,6 +141,7 @@ function openform_solicitud(op, id) {
             catalogo_on();
             off_entregado();
             botones_off();
+            off_asignar_mensajero();
             $("#btn5").show();
         });
     }
@@ -139,6 +157,7 @@ function openform_solicitud(op, id) {
             $("#btn1").show();
         });
     }
+
 }
 
 function botones_off() {
@@ -219,6 +238,37 @@ function off_solicita() {
 }
 
 function crear_solicitud(id) {
+
+    if (!$('#proceso').val()) {
+        $.notify("Información incompleta, seleccione proceso ", "error");
+        return false;
+    }
+
+    if (!$('#colaborador').val()) {
+        $.notify("Información incompleta, seleccione nombre de quien hace la solicitud ", "error");
+        return false;
+    }
+
+    if (!$('#prioridad').val()) {
+        $.notify("Información incompleta, seleccione prioridad ", "error");
+        return false;
+    }
+
+    if (!$('#actividad').val()) {
+        $.notify("Información incompleta, seleccione actividad ", "error");
+        return false;
+    }
+
+    if (!$('#turno').val()) {
+        $.notify("Información incompleta, seleccione turno ", "error");
+        return false;
+    }
+
+    if (!$('#fecha_sugerida').val()) {
+        $.notify("Información incompleta, seleccione fecha sugerida", "error");
+        return false;
+    }
+
     var url = base_url("index.php/solicitud/Solicitud/crear_solicitud/");
     $.ajax({
         url: url,
@@ -226,9 +276,12 @@ function crear_solicitud(id) {
         type: "POST",
         success: function(response) {
             $.notify("Los cambios han sido guardados", "success");
+            $('#opcion').val("");
+            $('#id').val("")
+            $("#file").val("");
+
             solicitud_lista();
             cerrar_formulario();
-
         },
         error: function(error) {},
     });
@@ -247,14 +300,20 @@ function aceptar_rechazar() {
                 $.notify("Los cambios han sido guardados", "success");
                 solicitud_lista();
                 cerrar_formulario();
+
                 //----------------------------------------
                 if ($('input:radio[name=aceptar]:checked').val() == 1) {
 
                 } else {
-                    var url = base_url("index.php/welcome/enviar_correo_rechazo/" + $('#idsolicitud').val() + "/" + $('#motivo_rechazo').val());
+                    var url = base_url("index.php/welcome/enviar_correo_rechazo");
+                    var id = $("#idsolicitud").val();
+                    var motivo = $("#motivo_rechazo").val();
 
-                    $.get(url, function(data) {
-
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: { id_solicitud: id, motivo_rechazo: motivo },
+                        success: function(datos) {}
                     });
                 }
 
@@ -270,7 +329,22 @@ function aceptar_rechazar() {
     });
 }
 
+
 function asignar_mensajero() {
+    if (!$('#tipo_viaje').val()) {
+        $.notify("Información incompleta, seleccione tipo de viaje ", "error");
+        return false;
+    }
+
+    if (!$('#mensajero').val()) {
+        $.notify("Información incompleta, seleccione mensajero ", "error");
+        return false;
+    }
+
+    if (!$('#zona').val()) {
+        $.notify("Información incompleta, seleccione zona ", "error");
+        return false;
+    }
     var url = base_url("index.php/solicitud/Solicitud/asignar_mensajero/");
     $.ajax({
         url: url,
@@ -313,6 +387,12 @@ function entregado_mensajero() {
 }
 
 function liquidar() {
+    var solicitante = $("#liquidada_por").val();
+    if (!solicitante) {
+        $.notify("Error, seleccione solicitante, para poder liquidar ", "error");
+        return false;
+    }
+
     var url = base_url("index.php/solicitud/Solicitud/liquidar/");
     $.ajax({
         url: url,
@@ -608,9 +688,30 @@ function crear_manifiesto() {
     cerrar_formulario();
 }
 
+function get_fecha() {
+    var d = new Date();
+    var today = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    return today;
+}
+
 function filtro_solicitudes(opc) {
+    var today = get_fecha();
     desde = $("#desde").val();
     hasta = $("#hasta").val();
+
+    if (desde) {
+
+    } else {
+        $.notify("Error, selecciones fecha inicial ", "error");
+        return false;
+    }
+
+    if (hasta) {
+
+    } else {
+        hasta = today;
+    }
+
     mensajero = $("#mensajero_filtro").val();
     $("#desde1").val(desde);
     $("#hasta1").val(hasta);

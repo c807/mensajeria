@@ -1,19 +1,16 @@
 <?php
 
-if ( ! function_exists('login_url'))
-{
+if (!function_exists('login_url')) {
 	function login_url()
 	{
 		return "http://" . $_SERVER['SERVER_NAME'] . "/mensajeria/";
 	}
 }
 
-if ( ! function_exists('login'))
-{
+if (!function_exists('login')) {
 	
 	function login()
 	{
-	
 		if (isset($_SESSION['UserID']) && !empty($_SESSION['UserID'])) {
 			return true;
 		} else {
@@ -22,16 +19,16 @@ if ( ! function_exists('login'))
 	}
 }
 
-if ( ! function_exists('sys_url'))
-{
+if (!function_exists('sys_url')) {
 	function sys_url($url = '')
 	{
 		return "http://" . $_SERVER['SERVER_NAME'] . "/mensajeria/" . $url;
 	}
 }
 
-if ( ! function_exists('formatoFecha')) {
-	function formatoFecha($fecha = '', $tipo = 1) {
+if (!function_exists('formatoFecha')) {
+	function formatoFecha($fecha = '', $tipo = 1)
+	{
 		if (!empty($fecha)) {
 			if ($fecha == "0000-00-00" || $fecha == ' "' || $fecha == '" ' || $fecha == '"') {
 				return null;
@@ -45,7 +42,7 @@ if ( ! function_exists('formatoFecha')) {
 						break;
 					case 3:
 						$fh = explode('/', $fecha);
-						return $fh[2].'-'.$fh[1].'-'.$fh[0];
+						return $fh[2] . '-' . $fh[1] . '-' . $fh[0];
 						break;
 					default:
 						$formato = 'Y-m-d';
@@ -60,17 +57,17 @@ if ( ! function_exists('formatoFecha')) {
 	}
 }
 
-if ( ! function_exists('opcionesSelect')) {
+if (!function_exists('opcionesSelect')) {
 	function opcionesSelect($datos, $indice, $campo1, $campo2, $valor = array())
 	{
 		$arreglo = array('' => '-');
 
 		foreach ($datos as $row) {
 			if (empty($valor)) {
-				$arreglo[$row->$indice] = $row->$campo1. ' - ' . $row->$campo2;
+				$arreglo[$row->$indice] = $row->$campo1 . ' - ' . $row->$campo2;
 			} else {
 				if (is_array($valor) && in_array($row->$indice, $valor)) {
-					$arreglo[$row->$indice] = $row->$campo1. ' - ' . $row->$campo2 ;
+					$arreglo[$row->$indice] = $row->$campo1 . ' - ' . $row->$campo2;
 				}
 			}
 		}
@@ -79,17 +76,19 @@ if ( ! function_exists('opcionesSelect')) {
 	}
 }
 
-if (! function_exists('verDato')) {
-	function verDato($arre, $dato){
-		if (isset($arre[$dato]) && (!empty($arre[$dato]) || ($arre[$dato]==0)) ) {
+if (!function_exists('verDato')) {
+	function verDato($arre, $dato)
+	{
+		if (isset($arre[$dato]) && (!empty($arre[$dato]) || ($arre[$dato] == 0))) {
 			return true;
 		}
 		return false;
 	}
 }
 
-if (! function_exists('verDatovalor')) {
-	function verDatovalor($arre, $dato){
+if (!function_exists('verDatovalor')) {
+	function verDatovalor($arre, $dato)
+	{
 		if (!empty($arre[$dato])) {
 			return true;
 		}
@@ -98,8 +97,7 @@ if (! function_exists('verDatovalor')) {
 }
 
 
-if ( ! function_exists('enviarJson'))
-{
+if (!function_exists('enviarJson')) {
 	/**
 	 * Recibe un arreglo de datos y devuelve un archivo de cabecera json,
 	 * ideal para retornar en peticiones ajax
@@ -114,17 +112,17 @@ if ( ! function_exists('enviarJson'))
 }
 
 
-if ( ! function_exists(('sys_base'))) {
+if (!function_exists(('sys_base'))) {
 	# Devuelve la ruta de un archivo o carpeta en disco. Ej.: /home/usuer/documentos/archivo.pdf
 	# El parémetro a recibir es igual al formato de base_url
-	function sys_base($dir = '') {
-		return dirname( getcwd() ) . "/{$dir}";
+	function sys_base($dir = '')
+	{
+		return dirname(getcwd()) . "/{$dir}";
 	}
 }
 
 
-if ( ! function_exists('correo'))
-{
+if (!function_exists('correo')) {
 	function correo($args, $tipo = 2)
 	{
 		include sys_base('enviar_correo.php');
@@ -135,19 +133,23 @@ if ( ! function_exists('correo'))
 
 
 if (!function_exists('enviarCorreo')) {
-	function enviarCorreo($datos = array()){
+	function enviarCorreo($datos = array())
+	{
 		$url = "http://intranet.c807.com/grupo_c807/mtm/contactos/index.php/envio/general";
 
-		if (empty($datos['de'])) { $datos['de'] = array('noreply@c807.com', 'C807'); }
+		if (empty($datos['de'])) {
+			$datos['de'] = array('noreply@c807.com', 'C807');
+		}
 
 		$postdata = http_build_query(array('datos' => $datos), '', '&');
 
-		$opts = array('http' =>
-		    array(
-		        'method'  => 'POST',
-		        'header'  => 'Content-type: application/x-www-form-urlencoded',
-		        'content' => $postdata
-		    )
+		$opts = array(
+			'http' =>
+			array(
+				'method'  => 'POST',
+				'header'  => 'Content-type: application/x-www-form-urlencoded',
+				'content' => $postdata
+			)
 		);
 
 		$context = stream_context_create($opts);
@@ -158,6 +160,3 @@ if (!function_exists('enviarCorreo')) {
 		return isset($obj->exito) ? $obj->exito : $resultado;
 	}
 }
-
-
-

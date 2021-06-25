@@ -12,7 +12,6 @@ class Solicitud extends CI_Controller
         $this->load->model('solicitud/Solicitud_model');
         $this->load->model('Conf_model');
         $this->load->helper('c807');
-        
     }
 
 
@@ -41,11 +40,18 @@ class Solicitud extends CI_Controller
     }
 
     public function lista_solicitud()
-
     {
+        $usuario = $_SESSION['UserID'];
+        $permitido = $this->Solicitud_model->permitido($usuario);
         $datos['mensajero'] = $this->Conf_model->mensajero();
         $datos['estatus'] = $this->Conf_model->estatus();
-        $datos['lista_solicitud']    = $this->Solicitud_model->lista_solicitud();
+
+        if ($permitido->jefe == 1 || $permitido->supervisor == 1) {
+            $datos['lista_solicitud'] = $this->Solicitud_model->lista_solicitud(1);
+        } else {
+            $datos['lista_solicitud'] = $this->Solicitud_model->lista_solicitud(0);
+        }
+
         $this->load->view('solicitud/cuerpo', $datos);
     }
 
@@ -70,15 +76,21 @@ class Solicitud extends CI_Controller
         }
 
         if ($op > 1) {
-            $_SESSION['usuario'] = 0;
             $datos['datos_solicitud'] = $this->Solicitud_model->get_solicitud($id);
         }
+        if ($op == 0) {
+            $_SESSION['usuario'] = 0;
+        }
+
+        $usr = $datos['datos_solicitud']->usuario;
+        $mail = $this->Conf_model->dtusuario($usr);
+        $_SESSION['email'] = $mail->mail;
         $this->load->view('solicitud/form', $datos);
     }
 
     public function crear_solicitud()
     {
-               if ($_SESSION['usuario'] == 0) {
+        if ($_SESSION['usuario'] == 0) {
             $id_usuario = $_POST['colaborador'];
         } else {
             $id_usuario = $_SESSION['usuario'];
@@ -280,6 +292,8 @@ class Solicitud extends CI_Controller
             if ($numero == 1) {
                 $this->pdf->Image(getcwd() . "/public/img/grupocons.png", 17, 12, -125);
             } else {
+                $this->pdf->SetY(140);
+
                 $this->pdf->Image(getcwd() . "/public/img/grupocons.png", 17, 142, -125);
             }
             $this->pdf->Cell(50, 12, '', 'TBLR', 0, 'C', '0');
@@ -296,7 +310,7 @@ class Solicitud extends CI_Controller
             } else {
                 $this->pdf->Line(10, 254, 10, 140); //linea vertical izquierda
                 $this->pdf->Line(205, 254, 205, 140); //line vetical derecha
-                $this->pdf->Line(118, 182, 118, 152);
+                $this->pdf->Line(118, 182, 118, 152); //lin vertical en medio
             }
 
             $this->pdf->SetLeftMargin(15);
@@ -337,7 +351,9 @@ class Solicitud extends CI_Controller
             $this->pdf->Cell(87, 5, date('d-m-Y', strtotime($dato->fecha_sugerida)) . " " . date('H:i', strtotime($dato->hora_sugerida)), 0, 0, 'L', 0);
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(40, 5, "Firma:               ___________________ ", 0, 1, 'L', 0);
+
             $this->pdf->Line(10, 52, 205, 52);
+
             $this->pdf->SetFont('Times', 'B', 12);
             $this->pdf->Cell(190, 12, "SERVICIO SOLICITADO ", 0, 1, 'C', 0);
             $this->pdf->Line(10, 60, 205, 60);
@@ -368,7 +384,7 @@ class Solicitud extends CI_Controller
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(20, 5, utf8_decode("Dirección: "), 0, 0, 'L', 0);
             $this->pdf->SetFont('Times', '', 9);
-            $this->pdf->Cell(50, 5, utf8_decode($dato->direccion), 0, 1, 'L', 0);
+            $this->pdf->MultiCell(85, 5, utf8_decode($dato->direccion), 0,  'L', 0);
 
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(20, 5, "Consignado a: ", 0, 0, 'L', 0);
@@ -384,15 +400,10 @@ class Solicitud extends CI_Controller
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
             $this->pdf->SetFont('Times', '', 9);
-            $this->pdf->Cell(150, 10, utf8_decode($dato->observaciones), 'TBLR', 1, 'L', 0);
-            $this->pdf->Ln(15);
+            $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones), 0,  'L', 0);
+            $this->pdf->Ln(3);
 
 
-            if ($numero == 1) {
-                $this->pdf->Line(10, 103, 205, 103);
-            } else {
-                $this->pdf->Line(10, 182, 205, 182);
-            }
 
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(33, 5, "Mensajero: ", 0, 0, 'R', 0);
@@ -424,8 +435,8 @@ class Solicitud extends CI_Controller
             if ($numero == 1) {
                 $this->pdf->Line(10, 125, 205, 125);
             } else {
+                $this->pdf->Line(10, 182, 205, 182);
                 $this->pdf->Line(10, 190, 205, 190);
-                $this->pdf->Line(10, 233, 205, 233);
                 $this->pdf->Line(10, 254, 205, 254);
             }
             $this->pdf->Ln(9);
@@ -585,9 +596,13 @@ class Solicitud extends CI_Controller
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, utf8_decode("Fecha/Hora: "), 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(70, 5, date('d-m-Y H:i', strtotime($dato->fecha_recibido)), 0, 1, 'L', 0);
+        if (is_null($dato->fecha_recibido)) {
+            $fecha_recibido = "";
+        } else {
+            $fecha_recibido = date('d-m-Y H:i', strtotime($dato->fecha_recibido));
+        }
 
-
+        $this->pdf->Cell(70, 5,  $fecha_recibido, 0, 1, 'L', 0);
 
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, utf8_decode("F/H sugerída: "), 0, 0, 'L', 0);
@@ -632,7 +647,7 @@ class Solicitud extends CI_Controller
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, utf8_decode("Dirección: "), 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(50, 5, utf8_decode($dato->direccion), 0, 1, 'L', 0);
+        $this->pdf->MultiCell(85, 5, utf8_decode($dato->direccion), 0,  'L', 0);
 
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, "Consignado a: ", 0, 0, 'L', 0);
@@ -648,9 +663,11 @@ class Solicitud extends CI_Controller
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(150, 10, utf8_decode($dato->observaciones), 'TBLR', 1, 'L', 0);
-        $this->pdf->Ln(15);
-        $this->pdf->Line(10, 103, 205, 103);
+        $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones), 0,  'L', 0);
+        $this->pdf->Ln(3);
+
+
+        //$this->pdf->Line(10, 103, 205, 103);
 
 
         $this->pdf->SetFont('Times', 'B', 9);
@@ -668,14 +685,28 @@ class Solicitud extends CI_Controller
         $this->pdf->Cell(33, 5, utf8_decode("Fecha/hora realización: "), 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
 
-        $this->pdf->Cell(60, 5, date('d-m-Y', strtotime($dato->fecha_entrega)) . " " . date('H:i', strtotime($dato->hora_entrega)), 0, 0, 'L', 0);
+        if (is_null($dato->fecha_entrega)) {
+            $fecha_entrega = "";
+            $hora_entrega = "";
+        } else {
+            $fecha_entrega = date('d-m-Y H:i', strtotime($dato->fecha_entrega));
+            $hora_entrega = date('H:i', strtotime($dato->hora_entrega));
+        }
 
-
+        $this->pdf->Cell(60, 5, $fecha_entrega . " " . $hora_entrega, 0, 0, 'L', 0);
 
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(52, 5, "Fecha/hora recibido los documentos: ", 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(50, 5, date('d-m-Y', strtotime($dato->fecha_liquidada)) . " " . date('H:i', strtotime($dato->hora_liquidada)), 0, 0, 'L', 0);
+
+        if (is_null($dato->fecha_liquidada)) {
+            $fecha_liquidada = "";
+            $hora_liquidada = "";
+        } else {
+            $fecha_liquidada = date('d-m-Y H:i', strtotime($dato->fecha_liquidada));
+            $hora_liquidada = date('H:i', strtotime($dato->hora_liquidada));
+        }
+        $this->pdf->Cell(50, 5, $fecha_liquidada . " " . $hora_liquidada, 0, 0, 'L', 0);
 
         $this->pdf->Cell(133, 5, "", 0, 0, 'L', 0);
 
@@ -692,9 +723,17 @@ class Solicitud extends CI_Controller
 
     public function filtro_solicitudes($desde, $hasta, $mensajero)
     {
+        $usuario=$_SESSION['UserID'];
+        $permitido=$this->Solicitud_model->permitido($usuario);
+
+        $hasta = date("Y-m-d", strtotime($hasta . "+ 1 days"));
         $datos['mensajero'] = $this->Conf_model->mensajero();
-        $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero);
-        $this->load->view('solicitud/cuerpo', $datos);
+        if ($permitido->jefe == 1 || $permitido->supervisor == 1){
+            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero,1);
+        }else{
+            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero,0);
+        }
+       $this->load->view('solicitud/cuerpo', $datos);
     }
 
 
@@ -702,6 +741,18 @@ class Solicitud extends CI_Controller
     {
         $this->datos['lista']    = $this->Solicitud_model->lista_estatus($id);
         $this->load->view("solicitud/lista_bitacora", $this->datos);
+    }
+    public function permitir(){
+        $bandera=0;
+        $usuario=$_SESSION['UserID'];
+        $permitido=$this->Solicitud_model->permitido($usuario);
+        if ($permitido->jefe == 1 || $permitido->supervisor == 1){
+            $bandera=1;
+        }else{
+            $bandera=0;
+        }
+        echo json_encode($bandera);
+      
     }
 }
     

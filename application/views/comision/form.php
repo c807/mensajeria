@@ -23,7 +23,8 @@ label {
 $codigo = "";
 $nombre = "";
 $cobrada=0;
-if (isset($datos_solicitud)) {
+
+if (isset($datos_solicitudd)) {
     $idsolicitud = $datos_solicitud->solicitud;
     $file=$datos_solicitud->file;
     $fecha_solicitud=date('d/m/Y H:i', strtotime($datos_solicitud->creacion));
@@ -51,8 +52,14 @@ if (isset($datos_solicitud)) {
     $idmensajero=$datos_solicitud->mensajero;
     $nombre_mensajero=$datos_solicitud->nombre_mensajero;
     $fecha_entrega=$datos_solicitud->fecha_entrega;
+   
+    if (is_null($fecha_entrega)){
+        $fecha_entrega="mm/dd/yyyy";
+    }else{
+        $fecha_entrega= date('Y-m-d', strtotime($fecha_entrega));
+    }
     $hora_entrega=$datos_solicitud->hora_entrega;
-    $fecha_entrega= date('Y-m-d', strtotime($fecha_entrega));
+   
     $liquidada_por=$datos_solicitud->liquidada_por;
     $fecha_liquidada=date('Y-m-d', strtotime($datos_solicitud->fecha_liquidada));
     //$fecha_liquidada=date('d/m/Y H:i:s', strtotime($datos_solicitud->fecha_liquidada));
@@ -541,7 +548,7 @@ if (isset($datos_solicitud)) {
         <button class="btn btn-primary btn-sm" id="btn5" onclick="liquidar()"><i class="glyphicon glyphicon-ok"></i>
             Guardar</button>
 
-        <button class="btn btn-default btn-sm" onclick="cerrarform('form_solicitud')"><i class="glyphicon glyphicon-ok" ></i>
+        <button class="btn btn-default btn-sm" onclick="cerrarform('form_solicitud')"><i class="glyphicon glyphicon-ok" id="btn_cerrar" name="btn_cerrar"></i>
             Cancelar</button>
     </div>
     

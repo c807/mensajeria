@@ -86,28 +86,55 @@ if (isset($datos_solicitud)) {
     $idzona = $datos_solicitud->idzona;
     $nota = $datos_solicitud->observaciones;
     $recibidopor = $datos_solicitud->recibidopor;
-    $fecha_recibido = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_recibido));
+
+    if (is_null($datos_solicitud->fecha_recibido)){
+        $fecha_recibido = "mm/dd/yyy";
+    }else{
+        $fecha_recibido = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_recibido));
+    }
+   
     $aceptada = $datos_solicitud->aceptada;
     $motivo_rechazo = $datos_solicitud->motivo_rechazo;
     $idtipo = $datos_solicitud->idtipo;
     $idmensajero = $datos_solicitud->mensajero;
     $nombre_mensajero = $datos_solicitud->nombre_mensajero;
-    $fecha_entrega = $datos_solicitud->fecha_entrega;
+    if (is_null($datos_solicitud->fecha_entrega)) {
+        $fecha_entrega = "mm/dd/yyy";
+    } else {
+        $fecha_entrega = date('Y-m-d', strtotime($datos_solicitud->fecha_entrega));
+    }
     $hora_entrega = $datos_solicitud->hora_entrega;
-    $fecha_entrega = date('Y-m-d', strtotime($fecha_entrega));
     $liquidada_por = $datos_solicitud->liquidada_por;
-    $fecha_liquidada = date('Y-m-d', strtotime($datos_solicitud->fecha_liquidada));
+
+    if (is_null($datos_solicitud->fecha_liquidada)){
+        $fecha_liquidada = "mm/dd/yyy";
+    }else{
+        $fecha_liquidada = date('Y-m-d', strtotime($datos_solicitud->fecha_liquidada));
+    }
+    
     $hora_liquidada = $datos_solicitud->hora_liquidada;
     $nota_ent_mensajero = $datos_solicitud->nota_ent_mensajero;
     $nota_liquidacion = $datos_solicitud->nota_liquidacion;
-    $fecha_ent_mensajero = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_ent_mensajero));
-    $fecha_liquidacion = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_liquidacion));
+
+    if (is_null($datos_solicitud->fecha_ent_mensajero)){
+        $fecha_ent_mensajero = "mm/dd/yyy";
+    }else{
+        $fecha_ent_mensajero = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_ent_mensajero));
+    }
+
+    if (is_null($datos_solicitud->fecha_liquidacion)){
+        $fecha_liquidacion = "mm/dd/yyy";
+    }else{
+        $fecha_liquidacion = date('d/m/Y H:i', strtotime($datos_solicitud->fecha_liquidacion));
+    }
+    
+   
 }
 ?>
 
 
 <div class="container-fluid well well-sm">
-    <form enctype="multipart/form-data" class="formsolicitud form-horizontal" id="formsolicitud" action="javascript:mensajero_guardar()" >
+    <form enctype="multipart/form-data" class="formsolicitud form-horizontal" id="formsolicitud" action="javascript:mensajero_guardar()">
 
         <input type="hidden" id="idsolicitud" name="idsolicitud" class="form-control" value="<?php echo $idsolicitud; ?>">
 
@@ -123,7 +150,7 @@ if (isset($datos_solicitud)) {
 
                     <label class="col-md-2 lbl" for="file">File:</label>
                     <div class="col-sm-4 ">
-                        <input type="text" id="file" name="file" class="form-control" value="<?php echo $id_file; ?>" required>
+                        <input type="text" id="file" name="file" class="form-control" value="<?php echo $id_file; ?>" disabled>
                     </div>
 
                     <label class="col-md-1 " for="fecha_solicitud" style="padding-left:0px">Fecha:</label>
@@ -225,7 +252,7 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 " for="justificacion">Justificación</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" rows="2" id="justificacion" name="justificacion" placeholder="Justificación" disabled><?php echo $justificacion; ?></textarea>
+                        <textarea class="form-control" rows="2" id="justificacion" name="justificacion" placeholder="Justificación"  maxlength="120" disabled><?php echo $justificacion; ?></textarea>
                     </div>
                 </div>
 
@@ -250,14 +277,14 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="documento">Documento:</label>
                     <div class="col-sm-8">
-                        <input type="text" id="documento" name="documento" class="form-control" value="<?php echo $documento; ?>" required placeholder="Introduzca número de documento" disabled>
+                        <input type="text" id="documento" name="documento" class="form-control" value="<?php echo $documento; ?>" required placeholder="Introduzca número de documento" disabled maxlength="45">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="consignado_a">Consignado a:</label>
                     <div class="col-sm-10">
-                        <input type="text" id="consignado_a" name="consignado_a" class="form-control" value="<?php echo $consignadoa; ?>" required placeholder="Consignado a...">
+                        <input type="text" id="consignado_a" name="consignado_a" class="form-control" value="<?php echo $consignadoa; ?>" required placeholder="Consignado a..." maxlength="100">
                     </div>
                 </div>
 
@@ -268,21 +295,21 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="lugar">Lugar:</label>
                     <div class="col-sm-10">
-                        <input type="text" id="lugar" name="lugar" class="form-control" value="<?php echo $lugar; ?>" required placeholder="Introduzca lugar de retiro">
+                        <input type="text" id="lugar" name="lugar" class="form-control" value="<?php echo $lugar; ?>" required placeholder="Introduzca lugar de retiro" maxlength="120">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="contacto">Contacto:</label>
                     <div class="col-sm-10">
-                        <input type="text" id="contacto" name="contacto" class="form-control" value="<?php echo $contacto; ?>" required placeholder="Introduzca contacto">
+                        <input type="text" id="contacto" name="contacto" class="form-control" value="<?php echo $contacto; ?>" required placeholder="Introduzca contacto" maxlength="100">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="direccion">Dirección:</label>
                     <div class="col-sm-10">
-                        <input type="text" id="direccion" name="direccion" class="form-control" value="<?php echo $direccion; ?>" required placeholder="Introduzca dirección">
+                        <input type="text" id="direccion" name="direccion" class="form-control" value="<?php echo $direccion; ?>" required placeholder="Introduzca dirección" maxlength="120">
                     </div>
                 </div>
 
@@ -305,7 +332,7 @@ if (isset($datos_solicitud)) {
                 <div class="form-group ">
                     <div class="col-sm-2 lbl">Notas:</div>
                     <div class="col-sm-10">
-                        <textarea class="form-control" rows="2" id="observaciones" name="observaciones" placeholder="Observaciones"><?php echo $nota; ?></textarea>
+                        <textarea class="form-control" rows="2" id="observaciones" name="observaciones" placeholder="Observaciones" maxlength="120"><?php echo $nota; ?></textarea>
                     </div>
                 </div>
 
@@ -355,7 +382,7 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="motivo_rechazo">Motivo:</label>
                     <div class="col-sm-8">
-                        <textarea class="form-control" rows="2" id="motivo_rechazo" name="motivo_rechazo" placeholder="Motivo de rechazo"><?php echo $motivo_rechazo; ?></textarea>
+                        <textarea class="form-control" rows="2" id="motivo_rechazo" name="motivo_rechazo" placeholder="Motivo de rechazo" maxlength="100"><?php echo $motivo_rechazo; ?></textarea>
 
                     </div>
                 </div>
@@ -455,7 +482,7 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="nota_ent_mensajero"></label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" rows="2" id="nota_ent_mensajero" name="nota_ent_mensajero" placeholder="Observaciones"><?php echo $nota_ent_mensajero; ?></textarea>
+                        <textarea class="form-control" rows="2" id="nota_ent_mensajero" name="nota_ent_mensajero" placeholder="Observaciones" maxlength="100"><?php echo $nota_ent_mensajero; ?></textarea>
 
                     </div>
                 </div>
@@ -511,7 +538,7 @@ if (isset($datos_solicitud)) {
                 <div class="form-group">
                     <label class="col-sm-2 lbl" for="nota_liquidacion"></label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" rows="2" id="nota_liquidacion" name="nota_liquidacion" placeholder="Observaciones"><?php echo $nota_liquidacion; ?></textarea>
+                        <textarea class="form-control" rows="2" id="nota_liquidacion" name="nota_liquidacion" placeholder="Observaciones" maxlength="100"><?php echo $nota_liquidacion; ?></textarea>
 
                     </div>
                 </div>

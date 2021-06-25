@@ -30,11 +30,11 @@
         </button>
 
         <button type="button" class="btn btn-primary navbar-btn btn-sm" data-toggle="modal"
-            data-target="#manifiestoModal"> <i class="glyphicon glyphicon-th-list"></i> Manifiesto
+            data-target="#manifiestoModal" id="crear_manifiesto"> <i class="glyphicon glyphicon-th-list" ></i> Manifiesto
         </button>
 
         <button type="button" class="btn btn-primary navbar-btn btn-sm" data-toggle="modal"
-            data-target="#imprimirModal"> <i class="glyphicon glyphicon-print"></i> Imprimir
+            data-target="#imprimirModal" id="print_manifiesto"> <i class="glyphicon glyphicon-print" ></i> Imprimir
         </button>
 
     </div>

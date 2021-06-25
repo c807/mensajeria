@@ -10,9 +10,22 @@ function comision_lista() {
 }
 
 function lista_comision() {
+    var today = get_fecha();
     desde = $("#desde").val();
     hasta = $("#hasta").val();
     mensajero = $("#mensajero_comision").val();
+    if (desde) {
+
+    } else {
+        $.notify("Error, selecciones fecha inicial ", "error");
+        return false;
+    }
+
+    if (hasta) {
+
+    } else {
+        hasta = today;
+    }
     $("#desde1").val(desde);
     $("#hasta1").val(hasta);
     $("#mensajero_comision1").val(mensajero);

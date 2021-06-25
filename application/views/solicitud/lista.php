@@ -26,6 +26,7 @@
             Lista solicitudes
         </div>
         <div class="panel-body" id="contenido">
+        <div class="table-responsive">
             <table class="table" id="tabla_solicitudes">
                 <thead>
                     <tr>
@@ -45,6 +46,7 @@
 
                 </tbody>
             </table>
+        </div>
         </div>
     </div>
    

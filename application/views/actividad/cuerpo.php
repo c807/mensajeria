@@ -10,7 +10,7 @@ if (isset($lista)) {
        
 
         <button class="btn btn-default btn-xs" onclick="modal_eliminar_actividad(<?php echo $row->actividad; ?>)"><i
-                class="glyphicon glyphicon-trash"></i></button>
+                class="glyphicon glyphicon-lock"></i></button>
 
     </td>
 
@@ -26,16 +26,16 @@ if (isset($lista)) {
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Elimina Actividad</h4>
+                <h4 class="modal-title">Deshabilitar  Actividad</h4>
             </div>
             <div class="modal-body text-center">
                 <p id="id"></p>
-				<h5 id="msg">Esta seguro de eliminar este registro</h5>
+				<h5 id="msg">Esta seguro de deshabilitar este registro</h5>
 				<input type="hidden" id="actividad" name="actividad">
             </div>
             <div class="modal-footer">
                 <button type="button" name="Save" class="btn btn-success btn-sm" onclick="eliminar_actividad()"><span
-                        class="glyphicon glyphicon-trash"></span> Eliminar</button>
+                        class="glyphicon glyphicon-lock"></span> Deshabilitar</button>
                         
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"> <span
                         class="glyphicon glyphicon-remove"></span> Cancelar</button>

@@ -7,6 +7,7 @@
         public function rutas()
         {
             $query = $this->db->select('*')
+               ->where('estado',1)
                ->get('ruta')
                ->result();
             return $query;
@@ -33,8 +34,10 @@
         }
         public function eliminar_ruta($id)
         {
-            $this->db->where('idruta', $id);
-            $this->db->delete('ruta');
+            $this->db
+            ->set('estado', 0)
+            ->where('idruta', $id)
+            ->update('ruta');
         }
     }
     /* End of file ModelName.php */
