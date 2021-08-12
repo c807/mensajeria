@@ -96,13 +96,17 @@ if (isset($lista_solicitud)) {
 
         </td>
         <td nowrap>
-            <a href='#' onclick="enruta('<?php echo $row->solicitud; ?>')" class="btn btn-default btn-xs" title=""
-                data-id="" style="margin-left:3px">
+            <a href='#' onclick="enruta('<?php echo $row->solicitud; ?>')" class="btn btn-default btn-xs"
+                title="Estatus en ruta" data-id="" style="margin-left:3px">
                 <i class="glyphicon glyphicon-repeat"></i></a>
 
             <a href='#' onclick="lista_estatus('<?php echo $row->solicitud; ?>')" class="btn btn-default btn-xs"
-                title="" data-id="" style="margin-left:3px">
+                title="Bitácora" data-id="" style="margin-left:3px">
                 <i class="glyphicon glyphicon-th-list"></i></a>
+
+            <a href='#' onclick="mostrar_modal_confirmacion('<?php echo $row->solicitud; ?>','<?php echo $row->costo   ; ?>')" class="btn btn-default btn-xs"
+                title="Confirmar facturación" data-id="" >
+                <i class="glyphicon glyphicon-usd"></i></a>    
         </td>
 
     </tr>
@@ -241,8 +245,7 @@ if (isset($lista_solicitud)) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i
-                           > Cerrar</i></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i> Cerrar</i></button>
                 </div>
                 </form>
             </div>
@@ -251,7 +254,7 @@ if (isset($lista_solicitud)) {
     </div>
 
 
-    
+
 
     <div class="modal fade" id="filtrarModal" role="dialog" data-backdrop="static">
         <div class="modal-dialog ">
@@ -262,32 +265,48 @@ if (isset($lista_solicitud)) {
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="desde">Desde</label>
-                                    <input type="date" id="desde" name="desde" class="form-control" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="hasta">Hasta</label>
-                                    <input type="date" id="hasta" name="hasta" class="form-control" required>
-                                </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="desde">Desde</label>
+                                <input type="date" id="desde" name="desde" class="form-control" required>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-12">
-                                    <label for="mensajero_filtro">Mensajero</label>
-                                    <select name="mensajero_filtro" id="mensajero_filtro" required
-                                        class="form-control chosen  " data-placeholder="Seleccione...">
-                                        <option value=""></option>
-                                        <?php foreach ($mensajero as $row): ?>
-                                        <option value="<?php echo $row->mensajero; ?>">
-                                            <?php echo  $row->mensajero.' - '.$row->nombre; ?>
-                                        </option>
-                                        <?php endforeach ?>
-                                    </select>
-                                </div>
+                            <div class="form-group col-md-6">
+                                <label for="hasta">Hasta</label>
+                                <input type="date" id="hasta" name="hasta" class="form-control" required>
                             </div>
+                        </div>
                        
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="mensajero_filtro">Mensajero</label>
+                                <select name="mensajero_filtro" id="mensajero_filtro" required
+                                    class="form-control chosen  " data-placeholder="Seleccione...">
+                                    <option value=""></option>
+                                    <?php foreach ($mensajero as $row): ?>
+                                    <option value="<?php echo $row->mensajero; ?>">
+                                        <?php echo  $row->mensajero.' - '.$row->nombre; ?>
+                                    </option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="estatus_filtro">Estatus</label>
+                                <select name="estatus_filtro" id="estatus_filtro" required
+                                    class="form-control chosen  " data-placeholder="Seleccione...">
+                                    <option value=""></option>
+                                    <?php foreach ($estatus_all as $row): ?>
+                                    <option value="<?php echo $row->estatus; ?>">
+                                        <?php echo  $row->estatus.' - '.$row->descripcion; ?>
+                                    </option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -303,7 +322,34 @@ if (isset($lista_solicitud)) {
         </div>
     </div>
 
+    <div class="modal fade" id="confirmar_facturacionModal" role="dialog" data-backdrop="static">
+        <div class="modal-dialog ">
+            <div class="modal-content">
 
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirmar Facturación</h4>
+                </div>
+                <input type="hidden" id="id_confirmar" name="id_confirmar" class="form-control">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <p id="msg_confirma" name="msg_confirma"></p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" name="Save" class="btn btn-success" onclick="confirmar_facturacion()"><span
+                            class="glyphicon glyphicon-ok"></span>
+                        Aceptar</button>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-log-out"></span> Cancelar</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 </body>
 
 </html>

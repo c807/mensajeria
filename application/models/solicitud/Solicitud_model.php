@@ -6,36 +6,24 @@ class Solicitud_model extends CI_Model
 {
     public function lista_solicitud($todo)
     {
-        if ($todo == 1) {
-            $query = $this->db
-                ->select('so.*, co.usuario, co.nombre solicitado_por, co.nombre recibidopor, co.nombre solicitado_por, co.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                ->where('so.estatus !=', 8)
-                ->order_by('solicitud', 'DESC')
-                ->get('solicitud so')
-                ->result();
-            return $query;
-        } else {
-            $query = $this->db
-                ->select('so.*, co.usuario, co.nombre solicitado_por, co.nombre recibidopor, co.nombre solicitado_por, co.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                ->where('so.estatus !=', 8)
-                ->where('so.usuario =', $_SESSION['UserID'])
-                ->order_by('solicitud', 'DESC')
-                ->get('solicitud so')
-                ->result();
-            return $query;
+        $this->db->where('so.estatus !=', 8);
+        $this->db->where('so.estatus !=', 11);
+
+        if ($todo == 0) {
+            $this->db->where('so.usuario =', $_SESSION['UserID']);
         }
+        $query = $this->db
+            ->select('so.*, co.usuario, co.nombre solicitado_por, co.nombre recibidopor, co.nombre solicitado_por, co.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
+            ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
+            ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
+            ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
+            ->join('estatus es', 'es.estatus = so.estatus', 'inner')
+            ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
+            ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
+            ->order_by('solicitud', 'DESC')
+            ->get('solicitud so')
+            ->result();
+        return $query;
     }
 
     public function versolicitud($id)
@@ -44,9 +32,6 @@ class Solicitud_model extends CI_Model
             ->get('solicitud')
             ->row();
     }
-
-
-
     public function obtener_datos_file($numero_file)
     {
         return $this->db
@@ -180,82 +165,37 @@ class Solicitud_model extends CI_Model
         return $query;
     }
 
-    public function filtro_solicitudes($desde, $hasta, $mensajero, $todo)
+    public function filtro_solicitudes($desde, $hasta, $mensajero, $estatus, $todo)
     {
-        if ($mensajero == 0) {
-            if ($todo == 1) {
-                $query = $this->db
-                    ->select('so.*, co.usuario, co.nombre solicitado_por, us.nombre recibidopor,co.nombre solicitado_por, li.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                    ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                    ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                    ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                    ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                    ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                    ->join('csd.usuario us', 'us.usuario = so.recibido_por', 'left')
-                    ->join('csd.usuario li', 'li.usuario = so.liquidada_por', 'left')
-                    ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                    ->where("so.creacion BETWEEN '{$desde}' AND '{$hasta}'")
-                    ->order_by('so.solicitud', 'DESC')
-                    ->get('solicitud so')
-                    ->result();
-                return $query;
-            } else {
-                $query = $this->db
-                    ->select('so.*, co.usuario, co.nombre solicitado_por, us.nombre recibidopor,co.nombre solicitado_por, li.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                    ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                    ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                    ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                    ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                    ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                    ->join('csd.usuario us', 'us.usuario = so.recibido_por', 'left')
-                    ->join('csd.usuario li', 'li.usuario = so.liquidada_por', 'left')
-                    ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                    ->where("so.creacion BETWEEN '{$desde}' AND '{$hasta}'")
-                    ->where('so.usuario =', $_SESSION['UserID'])
-                    ->order_by('so.solicitud', 'DESC')
-                    ->get('solicitud so')
-                    ->result();
-                return $query;
-            }
-        } else {
-            if ($todo == 1) {
+        $this->db->where("so.creacion BETWEEN '{$desde}' AND '{$hasta}'");
 
-                $query = $this->db
-                    ->select('so.*, co.usuario, co.nombre solicitado_por, us.nombre recibidopor,co.nombre solicitado_por, li.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                    ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                    ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                    ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                    ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                    ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                    ->join('csd.usuario us', 'us.usuario = so.recibido_por', 'left')
-                    ->join('csd.usuario li', 'li.usuario = so.liquidada_por', 'left')
-                    ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                    ->where('so.mensajero', $mensajero)
-                    ->where("so.creacion BETWEEN '{$desde}' AND '{$hasta}'")
-                    ->order_by('so.solicitud', 'DESC')
-                    ->get('solicitud so')
-                    ->result();
-                return $query;
-            } else {
 
-                $query = $this->db
-                    ->select('so.*, co.usuario, co.nombre solicitado_por, us.nombre recibidopor,co.nombre solicitado_por, li.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
-                    ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
-                    ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
-                    ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
-                    ->join('estatus es', 'es.estatus = so.estatus', 'inner')
-                    ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
-                    ->join('csd.usuario us', 'us.usuario = so.recibido_por', 'left')
-                    ->join('csd.usuario li', 'li.usuario = so.liquidada_por', 'left')
-                    ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
-                    ->where("so.creacion BETWEEN '{$desde}' AND '{$hasta}'")
-                    ->where('so.usuario =', $_SESSION['UserID'])
-                    ->order_by('so.solicitud', 'DESC')
-                    ->get('solicitud so')
-                    ->result();
-                return $query;
-            }
+        if ($todo == 0) {
+            $this->db->where('so.usuario =', $_SESSION['UserID']);
         }
+
+        if ($mensajero > 0) {
+            $this->db->where('so.mensajero', $mensajero);
+        }
+
+        if ($estatus > 0) {
+            $this->db->where("so.estatus =", $estatus);
+        }
+
+        $query = $this->db
+            ->select('so.*, co.usuario, co.nombre solicitado_por, us.nombre recibidopor,co.nombre solicitado_por, li.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
+            ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
+            ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
+            ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
+            ->join('estatus es', 'es.estatus = so.estatus', 'inner')
+            ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
+            ->join('csd.usuario us', 'us.usuario = so.recibido_por', 'left')
+            ->join('csd.usuario li', 'li.usuario = so.liquidada_por', 'left')
+            ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
+            ->order_by('so.solicitud', 'DESC')
+            ->get('solicitud so')
+            ->result();
+        return $query;
     }
 
     public function lista_asignaciones($id)
@@ -276,6 +216,7 @@ class Solicitud_model extends CI_Model
             ->order_by('solicitud', 'ASC')
             ->where('so.mensajero', $id)
             ->where('so.estatus !=', 8)
+            ->where('so.estatus !=', 11)
             ->where('so.manifiesto=', 1)
             ->get('solicitud so')
             ->result();
@@ -314,6 +255,33 @@ class Solicitud_model extends CI_Model
             ->where('u.usuario', $id)
             ->get('csd.usuario u')
             ->row();
+        return $query;
+    }
+
+    public function confirmar_facturacion($id)
+    {
+        $this->db
+            ->set('estatus', 11)
+            ->where('solicitud', $id)
+            ->update('solicitud');
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function  pendientes_facturar()
+    {
+        $query = $this->db
+            ->select('so.*, co.usuario, co.nombre solicitado_por, co.nombre recibidopor, co.nombre solicitado_por, co.nombre liquidadapor,  po.nombre proceso, pr.descripcion nombre_prioridad, es.descripcion nombre_estatus, ac.descripcion nombre_actividad, me.nombre nombre_mensajero')
+            ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
+            ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
+            ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')
+            ->join('estatus es', 'es.estatus = so.estatus', 'inner')
+            ->join('actividad ac', 'ac.actividad = so.actividad', 'inner')
+            ->join('mensajero me', 'me.mensajero = so.mensajero', 'left')
+            ->where('so.estatus =', 8)
+            ->where('costo >', 0)
+            ->order_by('solicitud', 'DESC')
+            ->get('solicitud so')
+            ->result();
         return $query;
     }
 }

@@ -99,45 +99,10 @@ function autoriza_pago() {
     } else {}
     mostrarlista($("#desde1").val(), $("#hasta1").val(), mensajero);
 
-    /*for (i = 0; i < filas.length; i++) {
-    	var celdas = $(filas[i]).find("td");
-    	solicitud = $(celdas[0]).text();
-    	cheque = $(celdas[6]).text().trim();
-    	valor = 0;
-    	if (cheque == "X") {
-    		valor = 0;
-    	} else {
-    		valor = $("#valor").val();
-    	}
-    	var url = base_url(
-    		"index.php/comision/comision/autoriza_pago/" + solicitud + "/" + valor
-    	);
 
-    	$.ajax({
-    		url: url,
-    		data: $("form").serialize(),
-    		type: "POST",
-    		success: function (response) {
-    			if (response > 0) {
-    			} else {
-    			}
-    		},
-    		error: function (error) {
-    			$.notify("Error al intentar guardar ", "warning");
-    		},
-    	});
-    	mensajero = $("#mensajero_comision1").val();
-    	if (mensajero == "") {
-    		mensajero = 0;
-    	} else {
-    	}
-    	mostrarlista($("#desde1").val(), $("#hasta1").val(), mensajero);
-    }*/
     $.notify("Los cambios han sido guardados", "success");
     $(".modal-backdrop").remove();
     $("#precioModal").modal("hide");
-    //comision_lista();
-    //listado_comisiones();
 
     cerrar_formulario();
 }

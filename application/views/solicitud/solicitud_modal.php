@@ -33,6 +33,21 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="lst_estatus">Mensajero</label>
+                                    <select name="lst_estatus" id="lst_estatus"
+                                        class="form-control chosen  " data-placeholder="Seleccione...">
+                                        <option value=""></option>
+                                        <?php foreach ($estatus as $row): ?>
+                                        <option value="<?php echo $row->estatus; ?>">
+                                            <?php echo  $row->estatus.' - '.$row->descripcion; ?>
+                                        </option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
+                            </div>
                        
                     </div>
                 </div>

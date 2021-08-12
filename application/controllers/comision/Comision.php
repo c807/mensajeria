@@ -13,7 +13,6 @@
             $this->load->model('Conf_model');
         }
         
-    
         public function index()
         {
             $this->datos['navtext']   = "Gestión de Comisiones";

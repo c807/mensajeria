@@ -32,6 +32,10 @@
         <button type="button" class="btn btn-primary navbar-btn btn-sm" data-toggle="modal"
             data-target="#manifiestoModal" id="crear_manifiesto"> <i class="glyphicon glyphicon-th-list" ></i> Manifiesto
         </button>
+            
+        <button type="button" class="btn btn-primary navbar-btn btn-sm" id="no_facturados" onclick="pendientes_facturar()"><i
+                class="glyphicon glyphicon-usd"></i> Pendientes de facturar
+        </button>
 
         <button type="button" class="btn btn-primary navbar-btn btn-sm" data-toggle="modal"
             data-target="#imprimirModal" id="print_manifiesto"> <i class="glyphicon glyphicon-print" ></i> Imprimir

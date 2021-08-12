@@ -6,7 +6,7 @@ if (!function_exists('login_url')) {
 		return "http://" . $_SERVER['SERVER_NAME'] . "/mensajeria/";
 	}
 }
-
+//$_SESSION['UserID']=1192; //1192 1182 
 if (!function_exists('login')) {
 	
 	function login()

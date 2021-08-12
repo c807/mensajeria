@@ -33,6 +33,7 @@ if (isset($lista_comision)) {
         <td><?php echo $row->solicitud; ?></td>
         <td><?php echo  date('d/m/Y', strtotime($row->creacion)); ?></td>
         <td><?php echo $row->consignado_a; ?></td>
+        <td><?php echo $row->nombre_mensajero; ?></td>
         <td><?php echo $row->lugar; ?></td>
         <td><?php echo $row->valor_comision; ?></td>
         <td><?php echo $row->detalle; ?></td>
@@ -51,6 +52,7 @@ if (isset($lista_comision)) {
                 data-toggle="modal" data-book-id="<?php echo  $row->solicitud; ?>"
                 data-book-id1="<?php echo $row->valor_comision; ?>" data-book-id2="<?php echo  $row->detalle; ?>">
                 <i class="glyphicon glyphicon-edit"></i></a>
+
         </td>
     </tr>
     <?php
@@ -185,8 +187,6 @@ if (isset($lista_comision)) {
 
         </div>
     </div>
-
-
 
 </body>
 

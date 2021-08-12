@@ -7,7 +7,7 @@ class Conf_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
-      
+        //$_SESSION['pais_id']=2; 
         if (isset($_SESSION['pais_id'])) {
             $this->pais = $_SESSION['pais_id'];
         } else {
@@ -111,6 +111,14 @@ class Conf_model extends CI_Model
         return $query;
     }
 
+    
+    public function estatus_all()
+    {
+        $query = $this->db->select('*')
+            ->get('estatus')
+            ->result();
+        return $query;
+    }
     
     public function mensajero_all()
     {

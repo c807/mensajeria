@@ -45,6 +45,7 @@ class Solicitud extends CI_Controller
         $permitido = $this->Solicitud_model->permitido($usuario);
         $datos['mensajero'] = $this->Conf_model->mensajero();
         $datos['estatus'] = $this->Conf_model->estatus();
+        $datos['estatus_all'] = $this->Conf_model->estatus_all();
 
         if ($permitido->jefe == 1 || $permitido->supervisor == 1) {
             $datos['lista_solicitud'] = $this->Solicitud_model->lista_solicitud(1);
@@ -73,18 +74,16 @@ class Solicitud extends CI_Controller
         if ($op == 1) {
             $datos['file'] = $this->Solicitud_model->get_file($id);
             $_SESSION['usuario'] = $datos['file']->usuario_id;
+            $_SESSION['proceso'] = $datos['file']->proceso_id;
         }
-
+      //  var_dump($datos['file']);
         if ($op > 1) {
             $datos['datos_solicitud'] = $this->Solicitud_model->get_solicitud($id);
         }
         if ($op == 0) {
             $_SESSION['usuario'] = 0;
         }
-
-        $usr = $datos['datos_solicitud']->usuario;
-        $mail = $this->Conf_model->dtusuario($usr);
-        $_SESSION['email'] = $mail->mail;
+      
         $this->load->view('solicitud/form', $datos);
     }
 
@@ -92,8 +91,10 @@ class Solicitud extends CI_Controller
     {
         if ($_SESSION['usuario'] == 0) {
             $id_usuario = $_POST['colaborador'];
+            $id_proceso= $_POST['proceso'];
         } else {
-            $id_usuario = $_SESSION['usuario'];
+            $id_usuario = $_SESSION['UserID'];
+            $id_proceso = $_SESSION['proceso'];
         }
 
         $actividad = $_POST["actividad"];
@@ -123,7 +124,7 @@ class Solicitud extends CI_Controller
         $data = array(
             'file'             => $_POST['file'],
             'usuario'          => $id_usuario,
-            'idproceso'        => $_POST['proceso'],
+            'idproceso'        => $id_proceso,
             'cobrada'          => $cobrada,
             'justificacion'    => $justificacion,
             'costo'            => $valor,
@@ -231,7 +232,7 @@ class Solicitud extends CI_Controller
     {
         $data = array(
             'solicitud'           => $_POST['idsolicitud'],
-            'liquidada_por'       => $_POST['liquidada_por'],
+            'liquidada_por'       => $_SESSION['UserID'],
             'fecha_liquidada'     => $_POST['fecha_liquidada'],
             'hora_liquidada'      => $_POST['hora_liquidada'],
             'nota_liquidacion'    => $_POST['nota_liquidacion'],
@@ -261,10 +262,9 @@ class Solicitud extends CI_Controller
             'finalizado'   => $finalizado
         );
 
-
         $result = $this->Solicitud_model->cambiar_estatus($data);
         echo $result;
-        $this->bitacora($_POST['idsolicitud'], $id);
+        $this->bitacora($solicitud, $id);
     }
 
     public function lista_asignaciones($id)
@@ -621,7 +621,7 @@ class Solicitud extends CI_Controller
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, "Prioridad: ", 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(70, 5, utf8_decode($dato->nombre_prioridad), 0, 0, 'L', 0);
+        $this->pdf->Cell(70, 5, utf8_decode($dato->nombre_prioridad."    " ."Cobro: $ ".$dato->costo), 0, 0, 'L', 0);
 
 
         $this->pdf->SetFont('Times', 'B', 9);
@@ -721,17 +721,20 @@ class Solicitud extends CI_Controller
         $this->pdf->Output('solicitud.pdf', 'f');
     }
 
-    public function filtro_solicitudes($desde, $hasta, $mensajero)
+    public function filtro_solicitudes($desde, $hasta, $mensajero, $estatus)
     {
         $usuario=$_SESSION['UserID'];
         $permitido=$this->Solicitud_model->permitido($usuario);
 
         $hasta = date("Y-m-d", strtotime($hasta . "+ 1 days"));
         $datos['mensajero'] = $this->Conf_model->mensajero();
+        $datos['estatus_all'] = $this->Conf_model->estatus_all();
+        $datos['estatus'] = $this->Conf_model->estatus();
+
         if ($permitido->jefe == 1 || $permitido->supervisor == 1){
-            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero,1);
+            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero, $estatus, 1);
         }else{
-            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero,0);
+            $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero, $estatus, 0);
         }
        $this->load->view('solicitud/cuerpo', $datos);
     }
@@ -753,6 +756,22 @@ class Solicitud extends CI_Controller
         }
         echo json_encode($bandera);
       
+    }
+    public function verificar_estatus($id){
+       $rsl = $this->Solicitud_model->get_solicitud($id);
+       echo $rsl->estatus;
+    }
+
+    public function confirmar_facturacion($id){
+        $rsl = $this->Solicitud_model->confirmar_facturacion($id);
+        return $rsl;
+
+    }
+
+    public function pendientes_facturar(){
+        $datos['lista_solicitud']    = $this->Solicitud_model->pendientes_facturar();
+     //  var_dump($datos['lista_solicitud']);
+        $this->load->view('solicitud/cuerpo', $datos);
     }
 }
     

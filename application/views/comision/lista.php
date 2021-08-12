@@ -23,6 +23,7 @@
                         <th>ID</th>
                         <th>Fecha Solicitud</th>
                         <th>Cliente</th>
+                        <th>Mensajero</th>
                         <th>Lugar</th>
                         <th>Valor</th>
                         <th>Detalle</th>

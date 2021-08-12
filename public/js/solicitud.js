@@ -8,24 +8,25 @@ function opc_botones() {
         if (data == 1) {
             $("#print_manifiesto").show();
             $("#crear_manifiesto").show();
+            $("#no_facturados").show();
+
         } else {
             $("#print_manifiesto").hide();
             $("#crear_manifiesto").hide();
+            $("#no_facturados").hide();
         }
-
     });
 }
 
 function solicitud_lista() {
-
     $("#contenidoLista_comision").hide();
     $("#lst_comision").hide();
     var url = base_url("index.php/solicitud/Solicitud/lista_solicitud");
     $.post(url, function(data) {
         document.getElementById("contenidoLista").innerHTML = data;
-        if ($('#opcion').val() == 1) {
-            op = $('#opcion').val();
-            id = $('#id').val()
+        if ($("#opcion").val() == 1) {
+            op = $("#opcion").val();
+            id = $("#id").val();
             $("#form_solicitud").show("blind");
             var url = base_url("index.php/solicitud/Solicitud/ver/" + op + "/" + id);
             $.get(url, function(data) {
@@ -38,12 +39,8 @@ function solicitud_lista() {
                 off_recibir();
                 botones_off();
                 $("#btn1").show();
-
             });
-
-        } else {
-
-        }
+        } else {}
         opc_impresion();
         opc_botones();
 
@@ -56,6 +53,64 @@ function solicitud_lista() {
 function openform_solicitud(op, id) {
     // op = 1; /* cuand op=0 indica que tiene un file asignado */
     // id = 10;
+    var estatus = verificar_estatus(id);
+
+    var msg =
+        "No puede aplicar esta opción, debido al estatus actual de esta solicitud!";
+
+    if (estatus == 8) {
+        //asignacion de mensajero
+        $.notify(
+            "Esta solicitud ya fue liquidada, no puede realizar cambios",
+            "error"
+        );
+        return false;
+    }
+
+    if (op == 2 && estatus > 3) {
+        //rechazar aceptar
+        $.notify(msg, "error");
+        return false;
+    }
+
+    if (op == 3) {
+        //rechazar aceptar
+        if (estatus == 1 || estatus == 3) {
+            $.notify(msg, "error");
+            return false;
+        }
+    }
+    if (op == 3) {
+        //rechazar aceptar
+        if (estatus > 4) {
+            $.notify(msg, "error");
+            return false;
+        }
+    }
+
+    if (op == 4 && estatus < 4) {
+        //liquidar mensajero
+        $.notify(msg, "error");
+        return false;
+    }
+
+    if (op == 4 && estatus > 6) {
+        //liquidar mensajero
+        $.notify(msg, "error");
+        return false;
+    }
+
+    if (op == 5 && estatus <= 4) {
+        //liquidar mensajero
+        $.notify(msg, "error");
+        return false;
+    }
+
+    if (op == 6 && estatus == 1) {
+        //editar solicitud
+        $.notify(msg, "error");
+        return false;
+    }
 
     if (id == 1) {
         op = 0;
@@ -93,7 +148,7 @@ function openform_solicitud(op, id) {
     }
 
     if (op == 2) {
-        //solicitud rechazada       
+        //solicitud rechazada
         $.get(url, function(data) {
             $("#contenidoeditar").html(data);
             off_solicita();
@@ -103,12 +158,11 @@ function openform_solicitud(op, id) {
             off_liquidado();
             botones_off();
             $("#btn2").show();
-
-
         });
     }
 
     if (op == 3) {
+        //asiganr mensajero
         $.get(url, function(data) {
             $("#contenidoeditar").html(data);
             off_solicita();
@@ -149,7 +203,6 @@ function openform_solicitud(op, id) {
     if (op == 6) {
         $.get(url, function(data) {
             $("#contenidoeditar").html(data);
-
             off_recibe();
             catalogo_on();
             off_entregado();
@@ -157,7 +210,19 @@ function openform_solicitud(op, id) {
             $("#btn1").show();
         });
     }
+}
 
+function verificar_estatus(id) {
+    var result = "";
+    var url = base_url("index.php/solicitud/Solicitud/verificar_estatus/" + id);
+    $.ajax({
+        url: url,
+        async: false,
+        success: function(data) {
+            result = data;
+        },
+    });
+    return result;
 }
 
 function botones_off() {
@@ -238,33 +303,37 @@ function off_solicita() {
 }
 
 function crear_solicitud(id) {
+    if ($("#file").val().length <= 0) {
+        if (!$("#proceso").val()) {
+            $.notify("Información incompleta, seleccione proceso ", "error");
+            return false;
+        }
 
-    if (!$('#proceso').val()) {
-        $.notify("Información incompleta, seleccione proceso ", "error");
-        return false;
+        if (!$("#colaborador").val()) {
+            $.notify(
+                "Información incompleta, seleccione nombre de quien hace la solicitud ",
+                "error"
+            );
+            return false;
+        }
     }
 
-    if (!$('#colaborador').val()) {
-        $.notify("Información incompleta, seleccione nombre de quien hace la solicitud ", "error");
-        return false;
-    }
-
-    if (!$('#prioridad').val()) {
+    if (!$("#prioridad").val()) {
         $.notify("Información incompleta, seleccione prioridad ", "error");
         return false;
     }
 
-    if (!$('#actividad').val()) {
+    if (!$("#actividad").val()) {
         $.notify("Información incompleta, seleccione actividad ", "error");
         return false;
     }
 
-    if (!$('#turno').val()) {
+    if (!$("#turno").val()) {
         $.notify("Información incompleta, seleccione turno ", "error");
         return false;
     }
 
-    if (!$('#fecha_sugerida').val()) {
+    if (!$("#fecha_sugerida").val()) {
         $.notify("Información incompleta, seleccione fecha sugerida", "error");
         return false;
     }
@@ -276,8 +345,8 @@ function crear_solicitud(id) {
         type: "POST",
         success: function(response) {
             $.notify("Los cambios han sido guardados", "success");
-            $('#opcion').val("");
-            $('#id').val("")
+            $("#opcion").val("");
+            $("#id").val("");
             $("#file").val("");
 
             solicitud_lista();
@@ -285,9 +354,7 @@ function crear_solicitud(id) {
         },
         error: function(error) {},
     });
-
 }
-
 
 function aceptar_rechazar() {
     var url = base_url("index.php/solicitud/Solicitud/aceptar_rechazar/");
@@ -298,25 +365,25 @@ function aceptar_rechazar() {
         success: function(response) {
             if (response > 0) {
                 $.notify("Los cambios han sido guardados", "success");
-                solicitud_lista();
-                cerrar_formulario();
-
-                //----------------------------------------
-                if ($('input:radio[name=aceptar]:checked').val() == 1) {
-
-                } else {
+                if ($("input:radio[name=aceptar]:checked").val() == 1) {} else {
                     var url = base_url("index.php/welcome/enviar_correo_rechazo");
                     var id = $("#idsolicitud").val();
                     var motivo = $("#motivo_rechazo").val();
+                    var idcolaborador = $("#idcolaborador").val();
 
                     $.ajax({
                         url: url,
                         type: "POST",
-                        data: { id_solicitud: id, motivo_rechazo: motivo },
-                        success: function(datos) {}
+                        data: {
+                            id_solicitud: id,
+                            motivo_rechazo: motivo,
+                            solicitdo_por: idcolaborador,
+                        },
+                        success: function(datos) {},
                     });
                 }
-
+                solicitud_lista();
+                cerrar_formulario();
 
                 //----------------------------------------
             } else {
@@ -329,19 +396,18 @@ function aceptar_rechazar() {
     });
 }
 
-
 function asignar_mensajero() {
-    if (!$('#tipo_viaje').val()) {
+    if (!$("#tipo_viaje").val()) {
         $.notify("Información incompleta, seleccione tipo de viaje ", "error");
         return false;
     }
 
-    if (!$('#mensajero').val()) {
+    if (!$("#mensajero").val()) {
         $.notify("Información incompleta, seleccione mensajero ", "error");
         return false;
     }
 
-    if (!$('#zona').val()) {
+    if (!$("#zona").val()) {
         $.notify("Información incompleta, seleccione zona ", "error");
         return false;
     }
@@ -388,11 +454,6 @@ function entregado_mensajero() {
 
 function liquidar() {
     var solicitante = $("#liquidada_por").val();
-    if (!solicitante) {
-        $.notify("Error, seleccione solicitante, para poder liquidar ", "error");
-        return false;
-    }
-
     var url = base_url("index.php/solicitud/Solicitud/liquidar/");
     $.ajax({
         url: url,
@@ -422,7 +483,6 @@ function lista_asignaciones() {
             $("#mensajero_re").val()
         );
         $.get(url, function(data) {
-
             pdf_asignaciones();
         });
     } else {
@@ -432,8 +492,15 @@ function lista_asignaciones() {
 }
 
 function cambiar_estatus() {
-    id = $("#estatus").val();
+    id = $("#id_solicitud").val();
 
+    var estatus = verificar_estatus(id);
+    if (estatus == 8) {
+        $.notify("No puede aplicar esta opción, debido al estatus actual de esta solicitud!");
+        return false;
+
+    }
+    id = $("#estatus").val();
     if ($("#seleccionado").val() == 0) {
         var url = base_url(
             "index.php/solicitud/Solicitud/cambiar_estatus/" +
@@ -492,7 +559,6 @@ function cambiar_estatus() {
                         $.notify("Error al intentar guardar ", "warning");
                     },
                 });
-
             } else {}
             opc = opc + 1;
         }
@@ -509,14 +575,11 @@ function pdf_asignaciones() {
 
     var url = "asignaciones.pdf";
 
-
     window.open(
         base_url(url),
         "ventana1",
         "width=600,height=600,scrollbars=no,toolbar=no, titlebar=no, menubar=no"
-
     );
-
 }
 
 function pdf_solicitus() {
@@ -584,13 +647,14 @@ function validar() {
 
     $(document).ready(function() {
         $("#actividad").change(function() {
-
-            if ($("#actividad").val() == 2 || $("#actividad").val() == 4 || $("#actividad").val() == 7) {
+            if (
+                $("#actividad").val() == 2 ||
+                $("#actividad").val() == 4 ||
+                $("#actividad").val() == 7
+            ) {
                 $("#documento").prop("disabled", false);
-
             } else {
                 $("#documento").prop("disabled", true);
-
             }
         });
     });
@@ -644,9 +708,7 @@ function cerrar_formulario() {
     cerrarform("form_solicitud");
 }
 
-
 function crear_manifiesto() {
-
     var filas = $("#tabla_solicitudes").find("tr");
     mensajero = $("#manifiesto").val();
 
@@ -676,7 +738,6 @@ function crear_manifiesto() {
                     $.notify("Error al intentar guardar ", "warning");
                 },
             });
-
         } else {}
         opc = opc + 1;
     }
@@ -690,7 +751,12 @@ function crear_manifiesto() {
 
 function get_fecha() {
     var d = new Date();
-    var today = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    var today =
+        d.getFullYear() +
+        "-" +
+        ("0" + (d.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + d.getDate()).slice(-2);
     return today;
 }
 
@@ -699,43 +765,49 @@ function filtro_solicitudes(opc) {
     desde = $("#desde").val();
     hasta = $("#hasta").val();
 
-    if (desde) {
-
-    } else {
+    if (desde) {} else {
         $.notify("Error, selecciones fecha inicial ", "error");
         return false;
     }
 
-    if (hasta) {
-
-    } else {
+    if (hasta) {} else {
         hasta = today;
     }
 
     mensajero = $("#mensajero_filtro").val();
+    estatus = $("#estatus_filtro").val();
+
     $("#desde1").val(desde);
     $("#hasta1").val(hasta);
     $("#mensajero_filtro").val(mensajero);
+    $("#estatus_filtro").val(estatus);
+
+
 
     if (mensajero == "") {
         mensajero = 0;
-    } else {}
+    }
+    if (estatus == "") {
+        estatus = 0;
+    }
 
-    mostrarlista_filtro(desde, hasta, mensajero);
+    mostrarlista_filtro(desde, hasta, mensajero, estatus);
     $("#mensajero_filtro").val("Seleccione...");
     $("#mensajero_filtro").chosen().val("Seleccione").trigger("chosen:updated");
     $(".modal-backdrop").remove();
     $("#filtrarModal").modal("hide");
 }
 
-function mostrarlista_filtro(desde, hasta, mensajero) {
+function mostrarlista_filtro(desde, hasta, mensajero, estatus) {
     var url = base_url(
         "index.php/solicitud/Solicitud/filtro_solicitudes/" +
         desde +
         "/" +
         hasta +
         "/" +
-        mensajero
+        mensajero +
+        "/" +
+        estatus
     );
 
     $.get(url, function(data) {
@@ -748,5 +820,49 @@ function lista_estatus(id) {
     $.post(url, function(data) {
         $("#modal_bitacora").modal("show");
         document.getElementById("lista_estatus").innerHTML = data;
+    });
+}
+
+function mostrar_modal_confirmacion(id, costo) {
+    var estatus = verificar_estatus(id);
+    if (estatus != 8) {
+        $.notify("No puede aplicar esta opción, debido al estatus actual de esta solicitud!");
+        return false;
+    }
+
+    if (costo == 0) {
+        $.notify("Error, La acción que usted quiere ejecutar, no aplica para esta solicitud.", "error");
+        return false;
+    }
+
+    var mensaje = "Está seguro de confirmar como facturada la solicitud número: " + id + " - valor facturación: $ " + costo;
+    $("#confirmar_facturacionModal").modal("show");
+    document.getElementById("msg_confirma").innerHTML = mensaje;
+    $("#id_confirmar").val(id);
+
+}
+
+function confirmar_facturacion() {
+    var id = $("#id_confirmar").val()
+    $("#confirmar_facturacionModal").modal("show");
+
+    var url = base_url(
+        "index.php/solicitud/Solicitud/confirmar_facturacion/" + id);
+    $.get(url, function(success) {
+        $.notify("El estatus ha sido actualizado correctamente.", "success");
+        $(".modal-backdrop").remove();
+        $("#confirmar_facturacionModal").modal("hide");
+        pendientes_facturar();
+
+    });
+}
+
+function pendientes_facturar() {
+    var url = base_url(
+        "index.php/solicitud/Solicitud/pendientes_facturar/");
+    $.get(url, function(data) {
+        document.getElementById("contenidoLista").innerHTML = data;
+
+
     });
 }
