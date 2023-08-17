@@ -12,6 +12,9 @@ class Solicitud extends CI_Controller
         $this->load->model('solicitud/Solicitud_model');
         $this->load->model('Conf_model');
         $this->load->helper('c807');
+        ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
     }
 
 
