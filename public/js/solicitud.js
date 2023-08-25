@@ -366,7 +366,7 @@ function aceptar_rechazar() {
     data: $("form").serialize(),
     type: "POST",
     success: function (response) {
-      //alert(response);
+    //  alert(response);
 
       $.notify("Los cambios han sido guardados", "success");
       if ($("input:radio[name=aceptar]:checked").val() == 1) {
@@ -628,10 +628,10 @@ function opc_impresion() {
 function validar() {
   $("input[name=cobrada]").on("change", function () {
     if ($(this).is(":checked")) {
-      $("#justificacion").prop("disabled", true);
+      $("#justificacion").prop("disabled", false);
       $("#valor").prop("disabled", false);
     } else {
-      $("#justificacion").prop("disabled", false);
+      $("#justificacion").prop("disabled", true);
       $("#valor").prop("disabled", true);
     }
   });
@@ -663,12 +663,14 @@ function validar() {
 
   $(document).ready(function () {
     $("#prioridad").change(function () {
-      if ($("#prioridad").val() == 4) {
+      if ($("#prioridad").val() == 4 || $("#prioridad").val() == 3) {
         $("#valor").prop("disabled", false);
+        $("#justificacion").prop("disabled", false);
         $("input[type=checkbox]").attr("disabled", false);
         $("input[type=checkbox]").prop("checked", true);
       } else {
         $("#valor").prop("disabled", true);
+        $("#justificacion").prop("disabled", true);
         $("input[type=checkbox]").attr("disabled", false);
         $("input[type=checkbox]").prop("checked", true);
         $("#cobrada").prop("checked", false);
