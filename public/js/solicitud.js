@@ -352,7 +352,7 @@ function crear_solicitud(id) {
       solicitud_lista();
       cerrar_formulario();
     },
-    error: function (error) {},
+    error: function (error) { },
   });
 }
 
@@ -366,7 +366,7 @@ function aceptar_rechazar() {
     data: $("form").serialize(),
     type: "POST",
     success: function (response) {
-    //  alert(response);
+      //  alert(response);
 
       $.notify("Los cambios han sido guardados", "success");
       if ($("input:radio[name=aceptar]:checked").val() == 1) {
@@ -381,7 +381,7 @@ function aceptar_rechazar() {
             motivo_rechazo: motivo,
             solicitdo_por: idcolaborador,
           },
-          success: function (datos) {},
+          success: function (datos) { },
         });
       }
       solicitud_lista();
@@ -479,7 +479,7 @@ function lista_asignaciones() {
   if (mensajero > 0) {
     var url = base_url(
       "index.php/solicitud/Solicitud/lista_asignaciones/" +
-        $("#mensajero_re").val()
+      $("#mensajero_re").val()
     );
     $.get(url, function (data) {
       pdf_asignaciones();
@@ -504,11 +504,11 @@ function cambiar_estatus() {
   if ($("#seleccionado").val() == 0) {
     var url = base_url(
       "index.php/solicitud/Solicitud/cambiar_estatus/" +
-        id +
-        "/" +
-        $("#id_solicitud").val() +
-        "/" +
-        $("#observacion").val()
+      id +
+      "/" +
+      $("#id_solicitud").val() +
+      "/" +
+      $("#observacion").val()
     );
 
     $.ajax({
@@ -540,11 +540,11 @@ function cambiar_estatus() {
       if ($("#chk" + opc).is(":checked")) {
         var url = base_url(
           "index.php/solicitud/Solicitud/cambiar_estatus/" +
-            id +
-            "/" +
-            codigo +
-            "/" +
-            $("#observacion").val()
+          id +
+          "/" +
+          codigo +
+          "/" +
+          $("#observacion").val()
         );
         $.ajax({
           url: url,
@@ -725,9 +725,9 @@ function crear_manifiesto() {
     if ($("#chk" + opc).is(":checked")) {
       var url = base_url(
         "index.php/solicitud/Solicitud/manifiesto/" +
-          solicitud +
-          "/" +
-          mensajero
+        solicitud +
+        "/" +
+        mensajero
       );
       //alert(solicitud+"-"+opc)
       $.ajax({
@@ -808,13 +808,13 @@ function filtro_solicitudes(opc) {
 function mostrarlista_filtro(desde, hasta, mensajero, estatus) {
   var url = base_url(
     "index.php/solicitud/Solicitud/filtro_solicitudes/" +
-      desde +
-      "/" +
-      hasta +
-      "/" +
-      mensajero +
-      "/" +
-      estatus
+    desde +
+    "/" +
+    hasta +
+    "/" +
+    mensajero +
+    "/" +
+    estatus
   );
 
   $.get(url, function (data) {

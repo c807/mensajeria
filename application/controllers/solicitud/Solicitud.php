@@ -13,8 +13,8 @@ class Solicitud extends CI_Controller
         $this->load->model('Conf_model');
         $this->load->helper('c807');
         ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
     }
 
 
@@ -79,14 +79,14 @@ error_reporting(E_ALL);
             $_SESSION['usuario'] = $datos['file']->usuario_id;
             $_SESSION['proceso'] = $datos['file']->proceso_id;
         }
-      //  var_dump($datos['file']);
+        //  var_dump($datos['file']);
         if ($op > 1) {
             $datos['datos_solicitud'] = $this->Solicitud_model->get_solicitud($id);
         }
         if ($op == 0) {
             $_SESSION['usuario'] = 0;
         }
-      
+
         $this->load->view('solicitud/form', $datos);
     }
 
@@ -94,7 +94,7 @@ error_reporting(E_ALL);
     {
         if ($_SESSION['usuario'] == 0) {
             $id_usuario = $_POST['colaborador'];
-            $id_proceso= $_POST['proceso'];
+            $id_proceso = $_POST['proceso'];
         } else {
             $id_usuario = $_SESSION['UserID'];
             $id_proceso = $_SESSION['proceso'];
@@ -148,15 +148,16 @@ error_reporting(E_ALL);
         $solicitud =  $this->Solicitud_model->crear_solicitud($id, $data);
         if ($id) {
         } else {
-            $this->bitacora($solicitud, 1);
+            $this->bitacora($solicitud, 1, "");
         }
     }
 
-    public function bitacora($id, $estatus)
+    public function bitacora($id, $estatus, $nota)
     {
         $datos = array(
             'solicitud'        => $id,
             'usuario'          => $_SESSION['UserID'],
+            'observaciones'    => $nota,
             'estatus'          => $estatus
         );
         $bitacora =  $this->Solicitud_model->bitacora($datos);
@@ -184,7 +185,7 @@ error_reporting(E_ALL);
 
         $result = $this->Solicitud_model->aceptar_rechazar($data);
         echo $result;
-        $this->bitacora($_POST['idsolicitud'], $estatus);
+        $this->bitacora($_POST['idsolicitud'], $estatus, "");
     }
 
     public function asignar_mensajero()
@@ -201,7 +202,7 @@ error_reporting(E_ALL);
 
         $result = $this->Solicitud_model->asignar_mensajero($data);
         echo $result;
-        $this->bitacora($_POST['idsolicitud'], 4);
+        $this->bitacora($_POST['idsolicitud'], 4, "");
     }
     public function manifiesto($solicitud, $mensajero)
     {
@@ -228,7 +229,7 @@ error_reporting(E_ALL);
 
         $result = $this->Solicitud_model->entregado_mensajero($data);
         echo $result;
-        $this->bitacora($_POST['idsolicitud'], 6);
+        $this->bitacora($_POST['idsolicitud'], 6, "");
     }
 
     public function liquidar()
@@ -246,7 +247,7 @@ error_reporting(E_ALL);
 
         $result = $this->Solicitud_model->liquidar($data);
         echo $result;
-        $this->bitacora($_POST['idsolicitud'], 8);
+        $this->bitacora($_POST['idsolicitud'], 8, "");
     }
 
     public function cambiar_estatus($id, $solicitud, $nota)
@@ -267,7 +268,7 @@ error_reporting(E_ALL);
 
         $result = $this->Solicitud_model->cambiar_estatus($data);
         echo $result;
-        $this->bitacora($solicitud, $id);
+        $this->bitacora($solicitud, $id, $nota);
     }
 
     public function lista_asignaciones($id)
@@ -400,18 +401,21 @@ error_reporting(E_ALL);
             $this->pdf->Cell(50, 5, utf8_decode($dato->nombre_turno), 0, 1, 'L', 0);
             $this->pdf->Ln(4);
 
+
+
+
+
+
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
             $this->pdf->SetFont('Times', '', 9);
-            $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones), 0,  'L', 0);
+            $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones) . " / " .  utf8_decode($dato->nota_ent_mensajero) . " / " .  utf8_decode($dato->nota_liquidacion), 0,  'L', 0);
             $this->pdf->Ln(3);
 
-
-
             $this->pdf->SetFont('Times', 'B', 9);
-            $this->pdf->Cell(33, 5, "Mensajero: ", 0, 0, 'R', 0);
+            $this->pdf->Cell(18, 5, "Mensajero: ", 0, 0, 'R', 0);
             $this->pdf->SetFont('Times', '', 9);
-            $this->pdf->Cell(60, 5, $dato->nombre_mensajero, 0, 0, 'L', 0);
+            $this->pdf->Cell(55, 5, $dato->nombre_mensajero, 0, 0, 'L', 0);
 
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(52, 5, "Nombre quien recibe: ", 0, 0, 'R', 0);
@@ -624,7 +628,7 @@ error_reporting(E_ALL);
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, "Prioridad: ", 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(70, 5, utf8_decode($dato->nombre_prioridad."    " ."Cobro: $ ".$dato->costo), 0, 0, 'L', 0);
+        $this->pdf->Cell(70, 5, utf8_decode($dato->nombre_prioridad . "    " . "Cobro: $ " . $dato->costo), 0, 0, 'L', 0);
 
 
         $this->pdf->SetFont('Times', 'B', 9);
@@ -666,7 +670,7 @@ error_reporting(E_ALL);
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones), 0,  'L', 0);
+        $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones) . " / " .  utf8_decode($dato->nota_ent_mensajero) . " / " .  utf8_decode($dato->nota_liquidacion), 0,  'L', 0);
         $this->pdf->Ln(3);
 
 
@@ -674,9 +678,9 @@ error_reporting(E_ALL);
 
 
         $this->pdf->SetFont('Times', 'B', 9);
-        $this->pdf->Cell(33, 5, "Mensajero: ", 0, 0, 'R', 0);
+        $this->pdf->Cell(18, 5, "Mensajero: ", 0, 0, 'R', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->Cell(60, 5, utf8_decode($dato->nombre_mensajero), 0, 0, 'L', 0);
+        $this->pdf->Cell(55, 5, utf8_decode($dato->nombre_mensajero), 0, 0, 'L', 0);
 
         $this->pdf->SetFont('Times', 'B', 9);
         $this->pdf->Cell(52, 5, "Nombre quien recibe: ", 0, 0, 'R', 0);
@@ -726,20 +730,20 @@ error_reporting(E_ALL);
 
     public function filtro_solicitudes($desde, $hasta, $mensajero, $estatus)
     {
-        $usuario=$_SESSION['UserID'];
-        $permitido=$this->Solicitud_model->permitido($usuario);
+        $usuario = $_SESSION['UserID'];
+        $permitido = $this->Solicitud_model->permitido($usuario);
 
         $hasta = date("Y-m-d", strtotime($hasta . "+ 1 days"));
         $datos['mensajero'] = $this->Conf_model->mensajero();
         $datos['estatus_all'] = $this->Conf_model->estatus_all();
         $datos['estatus'] = $this->Conf_model->estatus();
 
-        if ($permitido->jefe == 1 || $permitido->supervisor == 1){
+        if ($permitido->jefe == 1 || $permitido->supervisor == 1) {
             $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero, $estatus, 1);
-        }else{
+        } else {
             $datos['lista_solicitud']    = $this->Solicitud_model->filtro_solicitudes($desde, $hasta, $mensajero, $estatus, 0);
         }
-       $this->load->view('solicitud/cuerpo', $datos);
+        $this->load->view('solicitud/cuerpo', $datos);
     }
 
 
@@ -748,32 +752,34 @@ error_reporting(E_ALL);
         $this->datos['lista']    = $this->Solicitud_model->lista_estatus($id);
         $this->load->view("solicitud/lista_bitacora", $this->datos);
     }
-    public function permitir(){
-        $bandera=0;
-        $usuario=$_SESSION['UserID'];
-        $permitido=$this->Solicitud_model->permitido($usuario);
-        if ($permitido->jefe == 1 || $permitido->supervisor == 1){
-            $bandera=1;
-        }else{
-            $bandera=0;
+    public function permitir()
+    {
+        $bandera = 0;
+        $usuario = $_SESSION['UserID'];
+        $permitido = $this->Solicitud_model->permitido($usuario);
+        if ($permitido->jefe == 1 || $permitido->supervisor == 1) {
+            $bandera = 1;
+        } else {
+            $bandera = 0;
         }
         echo json_encode($bandera);
-      
     }
-    public function verificar_estatus($id){
-       $rsl = $this->Solicitud_model->get_solicitud($id);
-       echo $rsl->estatus;
+    public function verificar_estatus($id)
+    {
+        $rsl = $this->Solicitud_model->get_solicitud($id);
+        echo $rsl->estatus;
     }
 
-    public function confirmar_facturacion($id){
+    public function confirmar_facturacion($id)
+    {
         $rsl = $this->Solicitud_model->confirmar_facturacion($id);
         return $rsl;
-
     }
 
-    public function pendientes_facturar(){
+    public function pendientes_facturar()
+    {
         $datos['lista_solicitud']    = $this->Solicitud_model->pendientes_facturar();
-     //  var_dump($datos['lista_solicitud']);
+        //  var_dump($datos['lista_solicitud']);
         $this->load->view('solicitud/cuerpo', $datos);
     }
 }

@@ -12,6 +12,8 @@
 
                 <th class=" col-xs-6">Estatus</th>
 
+                <th class=" col-xs-6">Observaciones</th>
+
                 <th class=" col-xs-6">Usuario</th>
    
             </thead>
@@ -28,6 +30,10 @@
 
                     <td>
                         <?php echo $row->nombre_estatus; ?>
+                    </td>
+
+                    <td>
+                        <?php echo $row->observaciones; ?>
                     </td>
 
                     <td nowrap>

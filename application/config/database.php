@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 //require dirname(dirname(dirname(FCPATH))) . '/entorno.php';
 
 $active_group = 'default';

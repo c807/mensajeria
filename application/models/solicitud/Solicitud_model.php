@@ -148,7 +148,7 @@ class Solicitud_model extends CI_Model
         $query = $this->db
             ->select('co.usuario, co.nombre solicitado_por, us.nombre recibidopor,li.nombre liquidadapor, so.*, po.id, 
              po.nombre nombre_proceso, pr.prioridad, pr.descripcion nombre_prioridad, me.nombre nombre_mensajero, zo.idzona,
-             ac.descripcion nombre_actividad,tu.descripcion nombre_turno')
+             ac.descripcion nombre_actividad,tu.descripcion nombre_turno, so.nota_ent_mensajero, nota_liquidacion')
             ->join('csd.usuario co', 'co.usuario = so.usuario', 'inner')
             ->join('gacela.proceso po', 'po.id = so.idproceso', 'inner')
             ->join('prioridad pr', 'pr.prioridad = so.prioridad', 'inner')

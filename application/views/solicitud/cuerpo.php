@@ -17,6 +17,7 @@
 <body>
 
     <?php
+   // var_dump($lista_solicitud);
 if (isset($lista_solicitud)) {
     $c=1;
     foreach ($lista_solicitud as $row) { ?>
@@ -174,7 +175,8 @@ if (isset($lista_solicitud)) {
                     </div>
                     <div class="form-group">
                         <textarea class="form-control" rows="2" id="observacion" name="observacion"
-                            placeholder="observaciones"><?php echo $nota_estatus; ?></textarea>
+                            placeholder="observaciones"></textarea>
+                            
                     </div>
                 </div>
                 <div class="modal-footer">
