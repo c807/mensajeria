@@ -399,19 +399,20 @@ class Solicitud extends CI_Controller
             $this->pdf->Cell(20, 5, "Turno: ", 0, 0, 'L', 0);
             $this->pdf->SetFont('Times', '', 9);
             $this->pdf->Cell(50, 5, utf8_decode($dato->nombre_turno), 0, 1, 'L', 0);
-            $this->pdf->Ln(4);
+            $this->pdf->Ln(2);
 
-
-
-
-
-
-            $this->pdf->SetFont('Times', 'B', 9);
-            $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
             $this->pdf->SetFont('Times', '', 9);
-            $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones) . " / " .  utf8_decode($dato->nota_ent_mensajero) . " / " .  utf8_decode($dato->nota_liquidacion), 0,  'L', 0);
-            $this->pdf->Ln(3);
-
+            $this->pdf->Cell(189, 5, utf8_decode("Observación solicitante: ". utf8_decode($dato->observaciones)), 0, 1, 'L', 0);
+            $this->pdf->Ln(2);
+    
+            $this->pdf->SetFont('Times', '', 9);
+            $this->pdf->Cell(189, 5, utf8_decode("Observación mensajero: ". utf8_decode($dato->nota_ent_mensajero)), 0, 1, 'L', 0);
+            $this->pdf->Ln(2);
+    
+            $this->pdf->SetFont('Times', '', 9);
+            $this->pdf->Cell(20, 5, utf8_decode("Nota de liquidación: ". utf8_decode($dato->nota_liquidacion)), 0, 1, 'L', 0);
+            $this->pdf->Ln(2);
+            
             $this->pdf->SetFont('Times', 'B', 9);
             $this->pdf->Cell(18, 5, "Mensajero: ", 0, 0, 'R', 0);
             $this->pdf->SetFont('Times', '', 9);
@@ -665,12 +666,18 @@ class Solicitud extends CI_Controller
         $this->pdf->Cell(20, 5, "Turno: ", 0, 0, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
         $this->pdf->Cell(50, 5, utf8_decode($dato->nombre_turno), 0, 1, 'L', 0);
-        $this->pdf->Ln(4);
+        $this->pdf->Ln(2);
 
-        $this->pdf->SetFont('Times', 'B', 9);
-        $this->pdf->Cell(20, 5, "OBSERVACIONES: ", 0, 1, 'L', 0);
         $this->pdf->SetFont('Times', '', 9);
-        $this->pdf->MultiCell(185, 5, utf8_decode($dato->observaciones) . " / " .  utf8_decode($dato->nota_ent_mensajero) . " / " .  utf8_decode($dato->nota_liquidacion), 0,  'L', 0);
+        $this->pdf->Cell(189, 5, utf8_decode("Observación solicitante: ". utf8_decode($dato->observaciones)), 0, 1, 'L', 0);
+        $this->pdf->Ln(2);
+
+        $this->pdf->SetFont('Times', '', 9);
+        $this->pdf->Cell(189, 5, utf8_decode("Observación mensajero: ". utf8_decode($dato->nota_ent_mensajero)), 0, 1, 'L', 0);
+        $this->pdf->Ln(2);
+
+        $this->pdf->SetFont('Times', '', 9);
+        $this->pdf->Cell(20, 5, utf8_decode("Nota de liquidación: ". utf8_decode($dato->nota_liquidacion)), 0, 1, 'L', 0);
         $this->pdf->Ln(3);
 
 
